@@ -24,6 +24,11 @@ use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PengeluaranController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/jalankan-migrasi', function() {
+    \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+    return "Migrasi database berhasil dijalankan! Output: <pre>" . \Illuminate\Support\Facades\Artisan::output() . "</pre>";
+});
+
 Route::get('/', function () {
     if (auth()->check()) {
         return redirect()->route(auth()->user()->defaultDashboardRoute());
