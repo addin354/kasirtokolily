@@ -1,0 +1,18 @@
+
+   INFO  Configuration cache cleared successfully.  
+
+
+   INFO  Running migrations.  
+
+  2026_07_14_000001_create_retur_table .................................................................. 18.34ms DONE
+  2026_07_17_034135_add_user_id_to_retur_table .......................................................... 49.20ms DONE
+  2026_07_22_193106_add_foto_to_retur_table .............................................................. 6.14ms DONE
+  2026_07_22_194417_create_audit_logs_table .............................................................. 8.55ms DONE
+  2026_07_23_000001_create_pembelians_table ............................................................. 84.65ms DONE
+  2026_07_23_000002_create_detail_pembelians_table ...................................................... 70.11ms DONE
+  2026_07_23_000003_create_pengeluarans_table ........................................................... 48.47ms DONE
+  2026_07_27_000001_add_stok_minimum_to_produks_table .................................................... 9.00ms DONE
+  2026_07_27_233441_create_inventory_system_tables ........................................................... 3s DONE
+  2026_07_28_100341_add_payment_details_to_transaksi_table .............................................. 16.56ms DONE
+  2026_07_30_120000_add_metode_pembayaran_to_pembelians_and_pengeluarans ................................ 12.48ms DONE
+

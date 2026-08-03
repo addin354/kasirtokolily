@@ -1,0 +1,149 @@
+/* POS Kasir — utilitas tampilan mobile (Bootstrap 5, tanpa Tailwind) */
+html {
+    -webkit-text-size-adjust: 100%;
+}
+body {
+    overflow-x: hidden;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.app-navbar {
+    padding-top: max(0.5rem, env(safe-area-inset-top, 0));
+}
+.app-navbar .app-hamburger,
+.app-navbar .navbar-toggler {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    box-shadow: 0 0.125rem 0.35rem rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.2) !important;
+}
+.app-navbar .navbar-toggler:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.35);
+}
+.app-offcanvas-nav .nav-link {
+    border-radius: 0.5rem;
+    padding: 0.6rem 0.9rem;
+    color: #fff;
+}
+.app-offcanvas-nav .nav-link:hover,
+.app-offcanvas-nav .nav-link:focus,
+.app-offcanvas-nav .nav-link.active {
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+}
+img,
+svg,
+canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Hindari teks panjang mendorong layout melebar */
+.card,
+.table,
+.nav-link,
+.btn,
+.form-label {
+    overflow-wrap: anywhere;
+}
+
+.app-sidebar-nav .nav-link {
+    color: var(--bs-body-color, #212529);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+}
+.app-sidebar-nav .nav-link:hover {
+    background: rgba(13, 110, 253, 0.08);
+}
+.app-sidebar-nav .nav-link.active {
+    background: rgba(13, 110, 253, 0.14);
+    font-weight: 600;
+    color: #0d6efd;
+}
+
+/* Jangkauan jempol: area sentuh minimal */
+@media (max-width: 991.98px) {
+    .navbar .nav-link,
+    .offcanvas .nav-link,
+    .offcanvas .btn {
+        min-height: 2.75rem;
+        display: flex;
+        align-items: center;
+    }
+    .form-control,
+    .form-select,
+    .form-control.form-control-sm,
+    .form-select.form-select-sm {
+        min-height: 2.75rem;
+    }
+    .btn-lg-touch,
+    a.btn-lg-touch,
+    .btn.app-btn-wide {
+        min-height: 2.75rem;
+        padding-top: 0.55rem;
+        padding-bottom: 0.55rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+/* Pola: tabel desktop + kartu ponsel (sama seperti @include/dua blok) */
+.app-data-list .d-lg-block .table {
+    margin-bottom: 0;
+}
+.app-data-list .d-lg-none .app-card {
+    background: #fff;
+    border: 1px solid var(--bs-border-color, #dee2e6);
+    border-radius: 0.5rem;
+    box-shadow: 0 0.1rem 0.35rem rgba(0, 0, 0, 0.05);
+}
+.app-data-list .d-lg-none .app-card + .app-card {
+    margin-top: 0.5rem;
+}
+/* Tombol aksi penuh lebar di HP (opsional) */
+@media (max-width: 575.98px) {
+    .app-btn-fullsm {
+        width: 100%;
+    }
+}
+
+/* Tabel: scroll halus, hint shadow */
+.table-responsive {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+}
+
+/* Aksi bawah (mobile): ruang agar tidak tertutup UI sistem */
+.app-mobile-pad-bottom {
+    padding-bottom: 5rem;
+}
+@media (min-width: 768px) {
+    .app-mobile-pad-bottom {
+        padding-bottom: 0;
+    }
+}
+
+/* Sticky bar aksi (opsional) */
+@media (max-width: 767.98px) {
+    .sticky-actions-mobile {
+        position: sticky;
+        bottom: 0;
+        z-index: 100;
+        background: var(--bs-body-bg, #f8f9fa);
+        border-top: 1px solid var(--bs-border-color, #dee2e6);
+        padding: 0.75rem 0;
+        margin-left: -0.5rem;
+        margin-right: -0.5rem;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        margin-bottom: -1rem;
+        padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0));
+    }
+}
+
+/* Pagination sentuhan lebih besar di HP */
+@media (max-width: 575.98px) {
+    .pagination {
+        --bs-pagination-padding-x: 0.65rem;
+        --bs-pagination-padding-y: 0.45rem;
+    }
+}

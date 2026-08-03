@@ -1,0 +1,264 @@
+@php
+    $navMobile = $navMobile ?? false;
+    $navSidebar = $navSidebar ?? false;
+    $unreadReportsCount = \App\Models\Report::where('status', \App\Models\Report::STATUS_TERKIRIM)->count();
+@endphp
+@auth
+    @if (auth()->user()->isOwner())
+        {{-- ===== MENU UTAMA ===== --}}
+        <li class="nav-item mt-2">
+            <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">MENU UTAMA</span>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
+                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.stok') ? 'active' : '' }}" href="{{ route('owner.stok') }}">
+                <i class="bi bi-boxes me-2"></i> Monitoring Stok
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('products.*', 'categories.*', 'satuans.*') ? 'active' : '' }}" href="{{ route('products.index') }}">
+                <i class="bi bi-box-seam me-2"></i> Produk
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('suppliers.*') ? 'active' : '' }}" href="{{ route('suppliers.index') }}">
+                <i class="bi bi-people me-2"></i> Supplier
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('stok-masuk.*') ? 'active' : '' }}" href="{{ route('stok-masuk.index') }}">
+                <i class="bi bi-archive me-2"></i> Inventory
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('pembelian.*') ? 'active' : '' }}" href="{{ route('pembelian.index') }}">
+                <i class="bi bi-cart4 me-2"></i> Pembelian Barang
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('pengeluaran.*') ? 'active' : '' }}" href="{{ route('pengeluaran.index') }}">
+                <i class="bi bi-cash-stack me-2"></i> Pengeluaran
+            </a>
+        </li>
+
+        {{-- ===== LAPORAN ===== --}}
+        <li class="nav-item mt-3">
+            <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">LAPORAN</span>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('reports.*') ? 'active' : '' }} d-flex justify-content-between align-items-center" href="{{ route('reports.index') }}">
+                <span><i class="bi bi-journal-text me-2"></i> Laporan Kasir</span>
+                @if($unreadReportsCount > 0)
+                    <span class="badge bg-danger rounded-pill">{{ $unreadReportsCount }}</span>
+                @endif
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('laporan.penjualan') || request()->routeIs('laporan.export.pdf') ? 'active' : '' }}" href="{{ route('laporan.penjualan') }}">
+                <i class="bi bi-bar-chart-line me-2"></i> Laporan Penjualan
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('laporan.laba') || request()->routeIs('laporan.laba.export.pdf') ? 'active' : '' }}" href="{{ route('laporan.laba') }}">
+                <i class="bi bi-graph-up me-2"></i> Laporan Laba Rugi
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('laporan.retur') ? 'active' : '' }}" href="{{ route('laporan.retur') }}">
+                <i class="bi bi-arrow-counterclockwise me-2"></i> Laporan Retur
+            </a>
+        </li>
+
+        {{-- ===== AKUN ===== --}}
+        <li class="nav-item mt-3">
+            <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">AKUN</span>
+        </li>
+        <li class="nav-item">
+            <span class="nav-link disabled small {{ $navMobile ? 'text-white-50' : 'text-muted px-0' }}" style="font-size: 0.85rem;">
+                <i class="bi bi-person-badge me-2"></i> {{ auth()->user()->name }} ({{ auth()->user()->roleLabel() }})
+            </span>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('profile.edit') ? 'active' : '' }}" href="{{ route('profile.edit') }}">
+                <i class="bi bi-person me-2"></i> Profil
+            </a>
+        </li>
+        <li class="nav-item @if($navMobile) w-100 @endif mt-1">
+            <form method="POST" action="{{ route('logout') }}" class="d-inline w-100">
+                @csrf
+                <button type="submit" class="btn {{ $navSidebar ? 'btn-outline-secondary w-100 text-start border-0 ps-2 py-1' : 'btn-outline-light w-100 btn-lg-touch' }}">
+                    <i class="bi bi-box-arrow-right me-2"></i> Keluar
+                </button>
+            </form>
+        </li>
+    @elseif (auth()->user()->isAdmin())
+        {{-- ===== MENU UTAMA ===== --}}
+        <li class="nav-item mt-2">
+            <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">MENU UTAMA</span>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('products.*', 'categories.*', 'satuans.*') ? 'active' : '' }}" href="{{ route('products.index') }}">
+                <i class="bi bi-box-seam me-2"></i> Produk
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('suppliers.*') ? 'active' : '' }}" href="{{ route('suppliers.index') }}">
+                <i class="bi bi-people me-2"></i> Supplier
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('pelanggan.*') ? 'active' : '' }}" href="{{ route('pelanggan.index') }}">
+                <i class="bi bi-person-vcard me-2"></i> Pelanggan
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('stok-masuk.*') ? 'active' : '' }}" href="{{ route('stok-masuk.index') }}">
+                <i class="bi bi-archive me-2"></i> Inventory
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
+                <i class="bi bi-shield-lock me-2"></i> Manajemen User
+            </a>
+        </li>
+
+        {{-- ===== LAPORAN ===== --}}
+        <li class="nav-item mt-3">
+            <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">LAPORAN</span>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('pembelian.*') ? 'active' : '' }}" href="{{ route('pembelian.index') }}">
+                <i class="bi bi-cart4 me-2"></i> Pembelian Barang
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('pengeluaran.*') ? 'active' : '' }}" href="{{ route('pengeluaran.index') }}">
+                <i class="bi bi-cash-stack me-2"></i> Pengeluaran
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.stok') ? 'active' : '' }}" href="{{ route('owner.stok') }}">
+                <i class="bi bi-boxes me-2"></i> Monitoring Stok
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('laporan.penjualan') || request()->routeIs('laporan.export.pdf') ? 'active' : '' }}" href="{{ route('laporan.penjualan') }}">
+                <i class="bi bi-bar-chart-line me-2"></i> Laporan Penjualan
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('reports.*') ? 'active' : '' }} d-flex justify-content-between align-items-center" href="{{ route('reports.index') }}">
+                <span><i class="bi bi-journal-text me-2"></i> Laporan Kasir</span>
+                @if($unreadReportsCount > 0)
+                    <span class="badge bg-danger rounded-pill">{{ $unreadReportsCount }}</span>
+                @endif
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('laporan.laba') || request()->routeIs('laporan.laba.export.pdf') ? 'active' : '' }}" href="{{ route('laporan.laba') }}">
+                <i class="bi bi-graph-up me-2"></i> Laporan Laba Rugi
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('laporan.retur') ? 'active' : '' }}" href="{{ route('laporan.retur') }}">
+                <i class="bi bi-arrow-counterclockwise me-2"></i> Laporan Retur
+            </a>
+        </li>
+
+        {{-- ===== AKUN ===== --}}
+        <li class="nav-item mt-3">
+            <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">AKUN</span>
+        </li>
+        <li class="nav-item">
+            <span class="nav-link disabled small {{ $navMobile ? 'text-white-50' : 'text-muted px-0' }}" style="font-size: 0.85rem;">
+                <i class="bi bi-person-badge me-2"></i> {{ auth()->user()->name }} ({{ auth()->user()->roleLabel() }})
+            </span>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('profile.edit') ? 'active' : '' }}" href="{{ route('profile.edit') }}">
+                <i class="bi bi-person me-2"></i> Profil
+            </a>
+        </li>
+        <li class="nav-item @if($navMobile) w-100 @endif mt-1">
+            <form method="POST" action="{{ route('logout') }}" class="d-inline w-100">
+                @csrf
+                <button type="submit" class="btn {{ $navSidebar ? 'btn-outline-secondary w-100 text-start border-0 ps-2 py-1' : 'btn-outline-light w-100 btn-lg-touch' }}">
+                    <i class="bi bi-box-arrow-right me-2"></i> Keluar
+                </button>
+            </form>
+        </li>
+    @elseif (auth()->user()->isKasir())
+        <!-- MENU UTAMA -->
+        <li class="nav-item mt-2">
+            <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">MENU UTAMA</span>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('kasir.*') ? 'active' : '' }}" href="{{ route('kasir.index') }}">
+                <i class="bi bi-cart me-2"></i> Penjualan
+            </a>
+        </li>
+        <!-- LAPORAN -->
+        <li class="nav-item mt-3">
+            <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">LAPORAN</span>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('reports.*') ? 'active' : '' }}" href="{{ route('reports.index') }}">
+                <i class="bi bi-journal-text me-2"></i> Laporan ke Owner
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('laporan.retur') ? 'active' : '' }}" href="{{ route('laporan.retur') }}">
+                <i class="bi bi-arrow-counterclockwise me-2"></i> Laporan Retur
+            </a>
+        </li>
+        <!-- AKUN -->
+        <li class="nav-item mt-3">
+            <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">AKUN</span>
+        </li>
+        <li class="nav-item">
+            <span class="nav-link disabled small {{ $navMobile ? 'text-white-50' : 'text-muted px-0' }}" style="font-size: 0.85rem;">
+                <i class="bi bi-person-badge me-2"></i> {{ auth()->user()->name }} ({{ auth()->user()->roleLabel() }})
+            </span>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('profile.edit') ? 'active' : '' }}" href="{{ route('profile.edit') }}">
+                <i class="bi bi-person me-2"></i> Profil
+            </a>
+        </li>
+        <li class="nav-item @if($navMobile) w-100 @endif mt-1">
+            <form method="POST" action="{{ route('logout') }}" class="d-inline w-100">
+                @csrf
+                <button type="submit" class="btn {{ $navSidebar ? 'btn-outline-secondary w-100 text-start border-0 ps-2 py-1' : 'btn-outline-light w-100 btn-lg-touch' }}">
+                    <i class="bi bi-box-arrow-right me-2"></i> Keluar
+                </button>
+            </form>
+        </li>
+    @elseif (auth()->user()->isPelanggan())
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('katalog.*') ? 'active' : '' }}" href="{{ route('katalog.index') }}">Katalog produk</a>
+        </li>
+    @endif
+
+    @if (!auth()->user()->isKasir() && !auth()->user()->isOwner() && !auth()->user()->isAdmin())
+        <li class="nav-item">
+            <span class="nav-link small {{ $navMobile ? 'text-white-50' : '' }} {{ $navSidebar ? 'text-muted px-0' : 'py-lg-2 text-white-50' }}">{{ auth()->user()->name }} · {{ auth()->user()->roleLabel() }}</span>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link" href="{{ route('profile.edit') }}">Profil</a>
+        </li>
+        <li class="nav-item @if($navMobile) w-100 @endif">
+            <form method="POST" action="{{ route('logout') }}" class="d-inline w-100">
+                @csrf
+                <button type="submit" class="btn {{ $navSidebar ? 'btn-outline-secondary w-100 mt-1' : 'btn-outline-light' }} {{ $navMobile ? 'w-100 btn-lg-touch' : ($navSidebar ? '' : 'btn-sm ms-lg-2') }}">Keluar</button>
+            </form>
+        </li>
+    @endif
+@else
+    <li class="nav-item">
+        <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link" href="{{ route('login') }}">Masuk</a>
+    </li>
+@endauth
