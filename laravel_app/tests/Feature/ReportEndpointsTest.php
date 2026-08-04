@@ -444,4 +444,33 @@ class ReportEndpointsTest extends TestCase
         $content = $response->streamedContent();
         $this->assertStringContainsString('Beras Premium', $content);
     }
+
+    public function test_cashier_submitting_report_triggers_email_notification_to_owner(): void
+    {
+        \Illuminate\Support\Facades\Mail::fake();
+
+        $owner = User::factory()->create([
+            'role' => 'owner',
+            'email' => 'owner@tokolily.id',
+        ]);
+        $kasir = User::factory()->create([
+            'role' => 'kasir',
+            'email' => 'kasir@tokolily.id',
+        ]);
+
+        $this->actingAs($kasir);
+
+        $response = $this->post(route('reports.store'), [
+            'type' => 'harian',
+            'report_date' => '2026-08-04',
+            'notes' => 'Catatan laporan tes kasir',
+        ]);
+
+        $response->assertRedirect(route('reports.index'));
+
+        \Illuminate\Support\Facades\Mail::assertSent(\App\Mail\LaporanKasirMasuk::class, function ($mail) use ($owner) {
+            return $mail->hasTo('owner@tokolily.id');
+        });
+    }
 }
+

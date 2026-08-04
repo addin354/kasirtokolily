@@ -19,5 +19,6 @@ laravel_app/storage/framework/sessions/*
 laravel_app/storage/logs/*.log
 !laravel_app/storage/logs/.gitignore
 *.log
+*.zip
 .DS_Store
 Thumbs.db

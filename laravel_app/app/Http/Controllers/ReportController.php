@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\LaporanKasirMasuk;
 use App\Models\Report;
 use App\Models\Transaksi;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
+use Throwable;
 
 class ReportController extends Controller
 {
@@ -62,7 +66,7 @@ class ReportController extends Controller
             default => [],
         };
 
-        Report::create([
+        $report = Report::create([
             'user_id' => Auth::id(),
             'type' => $request->type,
             'report_date' => $request->report_date,
@@ -71,9 +75,39 @@ class ReportController extends Controller
             'status' => Report::STATUS_TERKIRIM,
         ]);
 
+        $this->sendEmailToOwner($report);
+
         return redirect()
             ->route('reports.index')
             ->with('success', 'Laporan tersimpan dan terkirim ke owner.');
+    }
+
+    private function sendEmailToOwner(Report $report): void
+    {
+        $report->loadMissing('user');
+
+        $recipients = User::query()
+            ->where('role', User::ROLE_OWNER)
+            ->pluck('email')
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        $configuredTo = (array) config('pos.stock_notification.email_to', []);
+        $recipients = array_values(array_unique(array_filter(array_merge($recipients, $configuredTo))));
+
+        if (empty($recipients)) {
+            return;
+        }
+
+        foreach ($recipients as $recipient) {
+            try {
+                Mail::to($recipient)->send(new LaporanKasirMasuk($report));
+            } catch (Throwable $e) {
+                Log::error("Gagal mengirim email laporan kasir ke {$recipient}: ".$e->getMessage());
+            }
+        }
     }
 
     public function show(Request $request, Report $report): View
