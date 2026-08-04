@@ -656,12 +656,20 @@
         }
     }
 
+    function isCartDisabled() {
+        var cartEmpty = $('#kasir-cart-body').html().indexOf('Keranjang kosong') !== -1;
+        var blocked = $('#kasir-cart-blocked-alert').is(':visible') && !$('#kasir-cart-blocked-alert').hasClass('d-none');
+        return cartEmpty || blocked;
+    }
+
     function handlePaymentMethodChange() {
         var method = $('#metode_pembayaran').val();
+        var disabled = isCartDisabled();
 
         if (method === 'Cash') {
             $('#bayar-container-group').removeClass('d-none');
-            $('#bayar').prop('disabled', false);
+            $('#bayar').prop('disabled', disabled);
+            $('#quick-cash-container button').prop('disabled', disabled);
 
             $('#payment-transfer-group').addClass('d-none');
             $('#nama_bank').prop('disabled', true);
@@ -672,6 +680,7 @@
         } else if (method === 'Transfer Bank') {
             $('#bayar-container-group').addClass('d-none');
             $('#bayar').prop('disabled', true);
+            $('#quick-cash-container button').prop('disabled', true);
 
             $('#payment-transfer-group').removeClass('d-none');
             $('#nama_bank').prop('disabled', false);
@@ -682,6 +691,7 @@
         } else if (method === 'QRIS') {
             $('#bayar-container-group').addClass('d-none');
             $('#bayar').prop('disabled', true);
+            $('#quick-cash-container button').prop('disabled', true);
 
             $('#payment-transfer-group').addClass('d-none');
             $('#nama_bank').prop('disabled', true);
@@ -711,7 +721,11 @@
         }
         var empty = !!data.cart_empty;
         var blocked = !!data.cart_blocked;
-        $('#bayar').prop('disabled', empty || blocked);
+        var method = $('#metode_pembayaran').val() || 'Cash';
+        var isCash = (method === 'Cash');
+
+        $('#bayar').prop('disabled', !isCash || empty || blocked);
+        $('#quick-cash-container button').prop('disabled', !isCash || empty || blocked);
         $('#kasir-checkout-btn').prop('disabled', empty || blocked);
         if (blocked) {
             $('#kasir-cart-blocked-alert').removeClass('d-none').show().text('Sesuaikan qty agar tidak melebihi stok sebelum bayar.');
@@ -1065,13 +1079,15 @@
     });
 
     // Quick cash buttons
-    $(document).on('click', '#btn-cash-exact', function() {
+    $(document).on('click', '#btn-cash-exact', function(e) {
+        e.preventDefault();
         var total = parseFloat($('#kasir-total-display').attr('data-amount')) || 0;
-        $('#bayar').val(total).trigger('input');
+        $('#bayar').val(total).trigger('input').trigger('change');
     });
-    $(document).on('click', '[data-cash]', function() {
-        var val = parseFloat($(this).data('cash')) || 0;
-        $('#bayar').val(val).trigger('input');
+    $(document).on('click', '#quick-cash-container [data-cash]', function(e) {
+        e.preventDefault();
+        var val = parseFloat($(this).attr('data-cash') || $(this).data('cash')) || 0;
+        $('#bayar').val(val).trigger('input').trigger('change');
     });
 
     // Quick add catalog card click handler
