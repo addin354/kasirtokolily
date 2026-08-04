@@ -1,0 +1,12 @@
+DirectoryIndex index.php public_html/index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # If the request is not for a real file/folder and not already in public_html
+    RewriteCond %{REQUEST_URI} !^/public_html/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ public_html/$1 [L]
+</IfModule>
