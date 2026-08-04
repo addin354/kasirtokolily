@@ -22,6 +22,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Dynamic Public Path detection for Shared Hosting
+        if (file_exists(base_path('../public_html/build/manifest.json'))) {
+            $this->app->usePublicPath(realpath(base_path('../public_html')));
+        } elseif (file_exists(base_path('public_html/build/manifest.json'))) {
+            $this->app->usePublicPath(realpath(base_path('public_html')));
+        }
+
         Paginator::useBootstrapFive();
 
         Gate::define('manage-products', function ($user) {
