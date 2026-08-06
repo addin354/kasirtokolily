@@ -299,10 +299,16 @@ class ProductController extends Controller
     {
         $this->authorize('delete', $product);
 
-        $product->delete();
+        try {
+            $product->delete();
 
-        return redirect()
-            ->route('products.index')
-            ->with('success', 'Produk berhasil dihapus.');
+            return redirect()
+                ->route('products.index')
+                ->with('success', 'Produk berhasil dihapus.');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return redirect()
+                ->route('products.index')
+                ->with('error', 'Produk "' . $product->nama . '" tidak dapat dihapus karena sudah memiliki riwayat transaksi atau stok.');
+        }
     }
 }
