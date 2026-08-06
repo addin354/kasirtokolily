@@ -123,8 +123,8 @@
                                 <td class="text-end">Rp {{ number_format($product->harga_grosir ?? 0, 0, ',', '.') }}</td>
                                 <td class="text-end">Rp {{ number_format($product->harga_bal ?? 0, 0, ',', '.') }}</td>
                                 <td class="text-end fw-semibold">
-                                    {{ $product->stok }}
-                                    <div class="small text-muted font-monospace" style="font-size: 0.75rem;">min: {{ $product->stok_minimum ?? 10 }}</div>
+                                    {{ (float)$product->stok == (int)$product->stok ? (int)$product->stok : rtrim(rtrim(number_format((float)$product->stok, 3, ',', '.'), '0'), ',') }}
+                                    <div class="small text-muted font-monospace" style="font-size: 0.75rem;">min: {{ (float)($product->stok_minimum ?? 10) == (int)($product->stok_minimum ?? 10) ? (int)($product->stok_minimum ?? 10) : rtrim(rtrim(number_format((float)($product->stok_minimum ?? 10), 3, ',', '.'), '0'), ',') }}</div>
                                 </td>
                                 <td>
                                     @can('write-data')
@@ -165,7 +165,7 @@
                         </div>
                         <div class="d-flex justify-content-between align-items-baseline border-top pt-2 mt-1">
                             <span class="small">Stok</span>
-                            <span class="fs-5 fw-bold">{{ $product->stok }} <span class="text-muted fs-6 font-monospace" style="font-size: 0.75rem;">/ min: {{ $product->stok_minimum ?? 10 }}</span></span>
+                            <span class="fs-5 fw-bold">{{ (float)$product->stok == (int)$product->stok ? (int)$product->stok : rtrim(rtrim(number_format((float)$product->stok, 3, ',', '.'), '0'), ',') }} <span class="text-muted fs-6 font-monospace" style="font-size: 0.75rem;">/ min: {{ (float)($product->stok_minimum ?? 10) == (int)($product->stok_minimum ?? 10) ? (int)($product->stok_minimum ?? 10) : rtrim(rtrim(number_format((float)($product->stok_minimum ?? 10), 3, ',', '.'), '0'), ',') }}</span></span>
                         </div>
                         <ul class="list-unstyled small mb-0 mt-2 text-muted">
                             <li>Beli Rp {{ number_format($product->harga_beli, 0, ',', '.') }} ·

@@ -54,16 +54,14 @@
     </select>
 </td>                   
 <td class="text-end small">Rp {{ number_format($line['harga'], 0, ',', '.') }}</td>
-                    <td>
                         <input
-    type="number"
-    min="0"
-    value="{{ $line['qty'] }}"
-    class="form-control form-control-sm kasir-qty-input"
-    data-line-id="{{ $line['line_id'] }}"
-    style="width:80px;"
->
-                    </td>
+                            type="text"
+                            inputmode="decimal"
+                            value="{{ (float) $line['qty'] == (int) $line['qty'] ? (int) $line['qty'] : (float) $line['qty'] }}"
+                            class="form-control form-control-sm kasir-qty-input text-center"
+                            data-line-id="{{ $line['line_id'] }}"
+                            style="width:80px;"
+                        >
                     <td class="text-end small">Rp {{ number_format($line['subtotal'], 0, ',', '.') }}</td>
                     <td>
                         <button type="button" class="btn btn-link btn-sm text-danger p-0 kasir-remove" data-line-id="{{ $line['line_id'] }}" style="text-decoration: none;">
@@ -146,11 +144,11 @@
     </button>
 
     <input
-        type="number"
+        type="text"
+        inputmode="decimal"
         class="form-control text-center kasir-qty"
         data-line-id="{{ $line['line_id'] }}"
-        value="{{ $line['qty'] }}"
-        min="0"
+        value="{{ (float) $line['qty'] == (int) $line['qty'] ? (int) $line['qty'] : (float) $line['qty'] }}"
     >
 
     <button

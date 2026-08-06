@@ -138,9 +138,10 @@
                         <label for="stok" class="form-label">Stok</label>
                         <input
                             type="number"
+                            step="any"
                             id="stok"
                             name="stok"
-                            value="{{ old('stok', $product->stok) }}"
+                            value="{{ old('stok', (float)$product->stok == (int)$product->stok ? (int)$product->stok : (float)$product->stok) }}"
                             class="form-control form-control-lg @error('stok') is-invalid @enderror"
                             min="0"
                         >
@@ -152,9 +153,10 @@
                         <label for="stok_minimum" class="form-label">Stok Minimum (Restok)</label>
                         <input
                             type="number"
+                            step="any"
                             id="stok_minimum"
                             name="stok_minimum"
-                            value="{{ old('stok_minimum', $product->stok_minimum ?? 10) }}"
+                            value="{{ old('stok_minimum', (float)($product->stok_minimum ?? 10) == (int)($product->stok_minimum ?? 10) ? (int)($product->stok_minimum ?? 10) : (float)($product->stok_minimum ?? 10)) }}"
                             class="form-control form-control-lg @error('stok_minimum') is-invalid @enderror"
                             min="0"
                         >

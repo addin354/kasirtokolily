@@ -136,6 +136,7 @@
                         <label for="stok" class="form-label">Stok Awal</label>
                         <input
                             type="number"
+                            step="any"
                             id="stok"
                             name="stok"
                             value="{{ old('stok', 0) }}"
@@ -150,6 +151,7 @@
                         <label for="stok_minimum" class="form-label">Stok Minimum (Restok)</label>
                         <input
                             type="number"
+                            step="any"
                             id="stok_minimum"
                             name="stok_minimum"
                             value="{{ old('stok_minimum', 10) }}"

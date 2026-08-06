@@ -33,7 +33,15 @@ class KasirController extends Controller
 
         $first = reset($raw);
         if (is_array($first) && isset($first['produk_id'], $first['jenis_harga'], $first['qty'])) {
-            return array_values($raw);
+            $out = [];
+            foreach (array_values($raw) as $item) {
+                $out[] = [
+                    'produk_id' => (int) $item['produk_id'],
+                    'jenis_harga' => (string) $item['jenis_harga'],
+                    'qty' => (float) str_replace(',', '.', (string) $item['qty']),
+                ];
+            }
+            return $out;
         }
 
         $out = [];
@@ -41,7 +49,7 @@ class KasirController extends Controller
             $out[] = [
                 'produk_id' => (int) $pid,
                 'jenis_harga' => Product::JENIS_ECERAN,
-                'qty' => (int) $qty,
+                'qty' => (float) str_replace(',', '.', (string) $qty),
             ];
         }
 
@@ -166,17 +174,21 @@ class KasirController extends Controller
 
     public function addToCart(Request $request)
     {
+        if ($request->has('qty')) {
+            $request->merge(['qty' => str_replace(',', '.', (string) $request->input('qty'))]);
+        }
+
         $data = $request->validate([
             'produk_id' => ['required', 'integer', 'exists:produks,id'],
-            'qty' => ['nullable', 'integer', 'min:1'],
+            'qty' => ['nullable', 'numeric', 'min:0.001'],
             'jenis_harga' => $this->jenisHargaRule(),
         ]);
 
-        $qty = $data['qty'] ?? 1;
+        $qty = (float) ($data['qty'] ?? 1);
         $jenis = $data['jenis_harga'];
 
         $product = Product::query()->find($data['produk_id']);
-        if (! $product || ! $product->is_active || $product->stok < 1) {
+        if (! $product || ! $product->is_active || (float) $product->stok <= 0) {
             return $this->addToCartResponse($request, false, 'Produk tidak tersedia atau stok habis.');
         }
 
@@ -184,7 +196,7 @@ class KasirController extends Controller
         $found = false;
         foreach ($cart as $i => $line) {
             if ($line['produk_id'] === $product->id && $line['jenis_harga'] === $jenis) {
-                $cart[$i]['qty'] = $line['qty'] + $qty;
+                $cart[$i]['qty'] = (float) $line['qty'] + $qty;
                 $found = true;
                 break;
             }
@@ -198,14 +210,14 @@ class KasirController extends Controller
             ];
         }
 
-        $newQtyPcs = 0;
+        $newQtyPcs = 0.0;
         foreach ($cart as $line) {
             if ($line['produk_id'] === $product->id) {
-                $newQtyPcs += $product->hitungQtyPcs($line['jenis_harga'], (int) $line['qty']);
+                $newQtyPcs += $product->hitungQtyPcs($line['jenis_harga'], (float) $line['qty']);
             }
         }
 
-        if ($newQtyPcs > (int) $product->stok) {
+        if ($newQtyPcs > (float) $product->stok) {
             return $this->addToCartResponse($request, false, 'Stok tidak mencukupi untuk produk ini.');
         }
 
@@ -219,9 +231,13 @@ class KasirController extends Controller
      */
     public function addToCartUnified(Request $request)
     {
+        if ($request->has('qty')) {
+            $request->merge(['qty' => str_replace(',', '.', (string) $request->input('qty'))]);
+        }
+
         $request->validate([
             'jenis_harga' => $this->jenisHargaRule(),
-            'qty' => ['nullable', 'integer', 'min:1'],
+            'qty' => ['nullable', 'numeric', 'min:0.001'],
             'id' => ['nullable', 'integer', 'exists:produks,id'],
             'code' => ['nullable', 'string', 'max:255'],
         ]);
@@ -326,10 +342,16 @@ class KasirController extends Controller
 
     public function updateCart(Request $request)
     {
+        if ($request->has('qty')) {
+            $request->merge(['qty' => str_replace(',', '.', (string) $request->input('qty'))]);
+        }
+
         $data = $request->validate([
             'line_id' => ['required', 'string', 'max:64'],
-            'qty' => ['required', 'integer', 'min:0'],
+            'qty' => ['required', 'numeric', 'min:0'],
         ]);
+
+        $newQty = (float) $data['qty'];
 
         $parts = explode('|', $data['line_id'], 2);
         if (count($parts) !== 2) {
@@ -343,7 +365,7 @@ class KasirController extends Controller
 
         $cart = $this->normalizeCart(session(self::CART_KEY, []));
 
-        if ($data['qty'] === 0) {
+        if ($newQty <= 0) {
             $cart = array_values(array_filter($cart, fn ($line) => ! ($line['produk_id'] === $produkId && $line['jenis_harga'] === $jenis)));
             $this->saveCart($cart);
 
@@ -358,21 +380,21 @@ class KasirController extends Controller
             return back()->with('error', 'Produk tidak valid; dihapus dari keranjang.');
         }
 
-        $sumOtherPcs = 0;
+        $sumOtherPcs = 0.0;
         foreach ($cart as $line) {
             if ($line['produk_id'] === $produkId && $line['jenis_harga'] !== $jenis) {
-                $sumOtherPcs += $product->hitungQtyPcs($line['jenis_harga'], (int) $line['qty']);
+                $sumOtherPcs += $product->hitungQtyPcs($line['jenis_harga'], (float) $line['qty']);
             }
         }
 
-        $qtyPcsBaris = $product->hitungQtyPcs($jenis, (int) $data['qty']);
-        if ($sumOtherPcs + $qtyPcsBaris > (int) $product->stok) {
+        $qtyPcsBaris = $product->hitungQtyPcs($jenis, $newQty);
+        if ($sumOtherPcs + $qtyPcsBaris > (float) $product->stok) {
             return back()->with('error', 'Stok tidak mencukupi (tersedia: ' . $product->stok . ' pcs).');
         }
 
         foreach ($cart as $i => $line) {
             if ($line['produk_id'] === $produkId && $line['jenis_harga'] === $jenis) {
-                $cart[$i]['qty'] = $data['qty'];
+                $cart[$i]['qty'] = $newQty;
                 break;
             }
         }
@@ -581,8 +603,8 @@ return response()->json([
                         ->lockForUpdate()
                         ->first();
 
-                    $qtyPcs = (int) $line['qty_pcs'];
-                    if (! $product || $qtyPcs < 1 || $qtyPcs > (int) $product->stok) {
+                    $qtyPcs = (float) $line['qty_pcs'];
+                    if (! $product || $qtyPcs <= 0 || $qtyPcs > (float) $product->stok) {
                         throw new \RuntimeException('Stok berubah saat transaksi; coba lagi.');
                     }
 
@@ -590,7 +612,7 @@ return response()->json([
                         'transaksi_id' => $transaksi->id,
                         'produk_id' => $product->id,
                         'jenis_harga' => $line['jenis_harga'],
-                        'qty_input' => (int) $line['qty_input'],
+                        'qty_input' => (float) $line['qty_input'],
                         'qty_pcs' => $qtyPcs,
                         'qty' => $qtyPcs,
                         'harga' => $line['harga'],
@@ -641,7 +663,7 @@ return redirect()
     return view('kasir.rawbt', compact('transaksi'));
 }
     /**
-     * @param  list<array{produk_id: int, jenis_harga: string, qty: int}>  $cart
+     * @param  list<array{produk_id: int, jenis_harga: string, qty: float}>  $cart
      * @return \Illuminate\Support\Collection<int, array<string, mixed>>
      */
     private function buildCartLines(array $cart)
@@ -660,16 +682,16 @@ return redirect()
             if (! $p) {
                 continue;
             }
-            $pcsByProduct[$pid] = ($pcsByProduct[$pid] ?? 0) + $p->hitungQtyPcs($l['jenis_harga'], (int) $l['qty']);
+            $pcsByProduct[$pid] = ($pcsByProduct[$pid] ?? 0.0) + $p->hitungQtyPcs($l['jenis_harga'], (float) $l['qty']);
         }
 
         return collect($cart)
             ->map(function ($line) use ($products, $pcsByProduct) {
-                $qtyInput = (int) $line['qty'];
+                $qtyInput = (float) $line['qty'];
                 $jenis = $line['jenis_harga'];
                 $id = (int) $line['produk_id'];
 
-                if ($qtyInput < 1) {
+                if ($qtyInput <= 0) {
                     return null;
                 }
 
@@ -684,13 +706,14 @@ return redirect()
 
                 $harga = $product->hargaUntukJenis($jenis);
                 $qtyPcs = $product->hitungQtyPcs($jenis, $qtyInput);
-                $stokKurang = ($pcsByProduct[$id] ?? 0) > (int) $product->stok;
+                $stokKurang = ($pcsByProduct[$id] ?? 0.0) > (float) $product->stok;
 
                 $isiBal = $product->pcsPerSatuanBal();
                 $previewBal = $jenis === Product::JENIS_BAL
                     ? '1 bal = '.$isiBal.' pcs'
                     : null;
-                $previewStok = 'Stok akan berkurang '.number_format($qtyPcs, 0, ',', '.').' pcs';
+                $formattedQtyPcs = (floor($qtyPcs) == $qtyPcs) ? number_format($qtyPcs, 0, ',', '.') : number_format($qtyPcs, 2, ',', '.');
+                $previewStok = 'Stok akan berkurang '.$formattedQtyPcs.' pcs';
 
                 return [
                     'line_id' => $this->cartLineId($product->id, $jenis),
@@ -704,7 +727,7 @@ return redirect()
                     'qty_pcs' => $qtyPcs,
                     'harga' => $harga,
                     'subtotal' => round($harga * $qtyInput, 2),
-                    'stok_tersedia' => (int) $product->stok,
+                    'stok_tersedia' => (float) $product->stok,
                     'stok_kurang' => $stokKurang,
                     'preview_bal' => $previewBal,
                     'preview_stok_kurang' => $previewStok,

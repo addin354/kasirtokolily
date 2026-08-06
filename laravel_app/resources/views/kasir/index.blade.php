@@ -1022,16 +1022,18 @@
     $(document).on('click', '.kasir-plus', function(e){
         e.preventDefault();
         let input = $(this).siblings('.kasir-qty');
-        let qty = parseInt(input.val()) || 0;
-        input.val(qty + 1).trigger('change');
+        let valStr = (input.val() || '0').replace(',', '.');
+        let qty = parseFloat(valStr) || 0;
+        input.val(Math.round((qty + 1) * 1000) / 1000).trigger('change');
     });
 
     $(document).on('click', '.kasir-minus', function(e){
         e.preventDefault();
         let input = $(this).siblings('.kasir-qty');
-        let qty = parseInt(input.val()) || 0;
+        let valStr = (input.val() || '0').replace(',', '.');
+        let qty = parseFloat(valStr) || 0;
         if(qty > 1){
-            input.val(qty - 1).trigger('change');
+            input.val(Math.round((qty - 1) * 1000) / 1000).trigger('change');
         }
     });
 

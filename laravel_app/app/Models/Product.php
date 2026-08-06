@@ -66,6 +66,8 @@ class Product extends Model
             'harga_jual' => 'decimal:2',
             'harga_grosir' => 'decimal:2',
             'harga_bal' => 'decimal:2',
+            'stok' => 'decimal:3',
+            'stok_minimum' => 'decimal:3',
             'isi_per_bal' => 'integer',
             'is_active' => 'boolean',
         ];
@@ -103,17 +105,18 @@ class Product extends Model
     /**
      * qty_input: pcs untuk ecer/grosir, jumlah bal untuk bal.
      *
-     * @return int pcs yang harus dikurangi dari stok & dipakai laporan laba (kolom qty)
+     * @return float pcs yang harus dikurangi dari stok & dipakai laporan laba (kolom qty)
      */
-    public function hitungQtyPcs(string $jenis, int $qtyInput): int
+    public function hitungQtyPcs(string $jenis, float|int|string $qtyInput): float
     {
-        if ($qtyInput < 1) {
-            return 0;
+        $qtyFloat = (float) str_replace(',', '.', (string) $qtyInput);
+        if ($qtyFloat <= 0) {
+            return 0.0;
         }
 
         return match ($jenis) {
-            self::JENIS_BAL => $qtyInput * $this->pcsPerSatuanBal(),
-            default => $qtyInput,
+            self::JENIS_BAL => $qtyFloat * $this->pcsPerSatuanBal(),
+            default => $qtyFloat,
         };
     }
 

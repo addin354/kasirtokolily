@@ -196,6 +196,13 @@ class ProductController extends Controller
     {
         $this->authorize('create', Product::class);
 
+        if ($request->has('stok')) {
+            $request->merge(['stok' => str_replace(',', '.', (string) $request->input('stok'))]);
+        }
+        if ($request->has('stok_minimum')) {
+            $request->merge(['stok_minimum' => str_replace(',', '.', (string) $request->input('stok_minimum'))]);
+        }
+
         $request->merge([
             'satuan_id' => $request->filled('satuan_id') ? (int) $request->satuan_id : null,
         ]);
@@ -210,8 +217,8 @@ class ProductController extends Controller
             'harga_grosir' => ['required', 'numeric', 'min:0'],
             'harga_bal' => ['required', 'numeric', 'min:0'],
             'isi_per_bal' => ['nullable', 'integer', 'min:1'],
-            'stok' => ['required', 'integer', 'min:0'],
-            'stok_minimum' => ['required', 'integer', 'min:0'],
+            'stok' => ['required', 'numeric', 'min:0'],
+            'stok_minimum' => ['required', 'numeric', 'min:0'],
         ]);
 
         Product::create([
@@ -262,6 +269,13 @@ class ProductController extends Controller
     {
         $this->authorize('update', $product);
 
+        if ($request->has('stok')) {
+            $request->merge(['stok' => str_replace(',', '.', (string) $request->input('stok'))]);
+        }
+        if ($request->has('stok_minimum')) {
+            $request->merge(['stok_minimum' => str_replace(',', '.', (string) $request->input('stok_minimum'))]);
+        }
+
         $request->merge([
             'satuan_id' => $request->filled('satuan_id') ? (int) $request->satuan_id : null,
         ]);
@@ -281,8 +295,8 @@ class ProductController extends Controller
             'harga_grosir' => ['required', 'numeric', 'min:0'],
             'harga_bal' => ['required', 'numeric', 'min:0'],
             'isi_per_bal' => ['nullable', 'integer', 'min:1'],
-            'stok' => ['required', 'integer', 'min:0'],
-            'stok_minimum' => ['required', 'integer', 'min:0'],
+            'stok' => ['required', 'numeric', 'min:0'],
+            'stok_minimum' => ['required', 'numeric', 'min:0'],
         ]);
 
         $product->update($validated);
