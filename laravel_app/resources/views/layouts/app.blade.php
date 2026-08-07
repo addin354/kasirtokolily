@@ -27,9 +27,9 @@
             >
                 <span class="navbar-toggler-icon" aria-hidden="true"></span>
             </button>
-            <a class="navbar-brand d-flex align-items-center fw-semibold me-0 text-truncate" style="max-width: min(16rem, 70vw);" href="{{ auth()->check() ? route(auth()->user()->defaultDashboardRoute()) : url('/') }}">
-                <img src="{{ asset('logo.png') }}" alt="" width="40" height="40" class="me-2 rounded-circle flex-shrink-0" loading="lazy" decoding="async">
-                <span class="text-truncate">Lily Sembako</span>
+            <a class="navbar-brand d-flex align-items-center fw-bold me-0 text-truncate" style="max-width: min(22rem, 75vw);" href="{{ auth()->check() ? route(auth()->user()->defaultDashboardRoute()) : url('/') }}">
+                <img src="{{ asset('logo.png') }}" alt="Logo Toko Lily Sembako" width="42" height="42" class="me-2 rounded-circle flex-shrink-0 bg-white p-1 shadow-sm" style="object-fit: cover;" loading="lazy" decoding="async">
+                <span class="text-truncate fs-5">Toko Lily Sembako</span>
             </a>
         </div>
     </div>
