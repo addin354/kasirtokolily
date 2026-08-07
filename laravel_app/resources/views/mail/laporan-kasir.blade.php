@@ -123,7 +123,7 @@
                         🔑 Masuk ke Aplikasi Kasir Toko Lily (Role Owner)
                     </a>
                     <div style="margin-top: 12px;">
-                        <a href="{{ url('/reports/' . $report->id) }}" style="color: #2563eb; font-size: 13px; text-decoration: underline;">
+                        <a href="{{ route('reports.show', $report->id) }}" style="color: #2563eb; font-size: 13px; text-decoration: underline;">
                             Lihat Rincian Laporan #{{ $report->id }}
                         </a>
                     </div>

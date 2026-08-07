@@ -267,6 +267,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:admin,owner,kasir')->group(function () {
         Route::get('/laporan-kasir', [ReportController::class, 'index'])->name('reports.index');
         Route::get('/laporan-kasir/{report}', [ReportController::class, 'show'])->name('reports.show');
+        Route::get('/reports/{report}', fn ($report) => redirect()->route('reports.show', $report));
     });
 
     /* Laporan finansial: gate (owner selalu, admin toko bila diizinkan config) */
