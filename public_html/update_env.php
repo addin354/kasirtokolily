@@ -18,7 +18,7 @@ $defaultEnvContent = <<<ENV
 APP_NAME="Toko Lily Sembako"
 APP_ENV=production
 APP_KEY=base64:LHjIzpkdIec5yJuToPwFYdt/pVOD26v8z1UP7xzuw48=
-APP_DEBUG=false
+APP_DEBUG=true
 APP_URL=https://kasirtokolily.id
 
 # Batas bawah (inklusif) stok "menipis" (kuning). Stok 0 = merah, di atas batas = hijau.
