@@ -97,6 +97,13 @@ class ReportController extends Controller
         $configuredTo = (array) config('pos.stock_notification.email_to', []);
         $recipients = array_values(array_unique(array_filter(array_merge($recipients, $configuredTo))));
 
+        // Filter email palsu/dummy (contoh: example.com)
+        $recipients = array_values(array_filter($recipients, function ($email) {
+            return filter_var($email, FILTER_VALIDATE_EMAIL)
+                && ! str_contains(strtolower($email), 'example.com')
+                && ! str_contains(strtolower($email), 'example.org');
+        }));
+
         if (empty($recipients)) {
             return;
         }
