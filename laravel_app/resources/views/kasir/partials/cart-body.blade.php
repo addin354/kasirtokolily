@@ -54,14 +54,16 @@
     </select>
 </td>                   
 <td class="text-end small">Rp {{ number_format($line['harga'], 0, ',', '.') }}</td>
+                    <td class="text-center">
                         <input
                             type="text"
                             inputmode="decimal"
                             value="{{ (float) $line['qty'] == (int) $line['qty'] ? (int) $line['qty'] : (float) $line['qty'] }}"
-                            class="form-control form-control-sm kasir-qty-input text-center"
+                            class="form-control form-control-sm kasir-qty-input text-center mx-auto"
                             data-line-id="{{ $line['line_id'] }}"
                             style="width:80px;"
                         >
+                    </td>
                     <td class="text-end small">Rp {{ number_format($line['subtotal'], 0, ',', '.') }}</td>
                     <td>
                         <button type="button" class="btn btn-link btn-sm text-danger p-0 kasir-remove" data-line-id="{{ $line['line_id'] }}" style="text-decoration: none;">
