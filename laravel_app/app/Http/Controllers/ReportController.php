@@ -95,13 +95,19 @@ class ReportController extends Controller
             ->all();
 
         $configuredTo = (array) config('pos.stock_notification.email_to', []);
+        $envEmail = env('STOK_ALERT_EMAIL_TO', 'addinhusnannadhari354@gmail.com');
+        if (! empty($envEmail)) {
+            $configuredTo[] = $envEmail;
+        }
+
         $recipients = array_values(array_unique(array_filter(array_merge($recipients, $configuredTo))));
 
         // Filter email palsu/dummy (contoh: example.com)
         $recipients = array_values(array_filter($recipients, function ($email) {
             return filter_var($email, FILTER_VALIDATE_EMAIL)
                 && ! str_contains(strtolower($email), 'example.com')
-                && ! str_contains(strtolower($email), 'example.org');
+                && ! str_contains(strtolower($email), 'example.org')
+                && ! str_contains(strtolower($email), 'owner@gmail.com');
         }));
 
         if (empty($recipients)) {

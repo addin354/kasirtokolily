@@ -119,9 +119,14 @@
 
                 <!-- Action Button -->
                 <div style="text-align: center; margin: 32px 0 16px 0;">
-                    <a href="{{ route('reports.show', $report->id) }}" style="display: inline-block; background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 600; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);">
-                        Buka Detail Laporan di Dashboard
+                    <a href="https://kasirtokolily.id/login" style="display: inline-block; background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-size: 15px; font-weight: 700; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25);">
+                        🔑 Masuk ke Aplikasi Kasir Toko Lily (Role Owner)
                     </a>
+                    <div style="margin-top: 12px;">
+                        <a href="{{ url('/reports/' . $report->id) }}" style="color: #2563eb; font-size: 13px; text-decoration: underline;">
+                            Lihat Rincian Laporan #{{ $report->id }}
+                        </a>
+                    </div>
                 </div>
             </td>
         </tr>
