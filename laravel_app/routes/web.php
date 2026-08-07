@@ -286,3 +286,20 @@ Route::middleware(['auth'])->group(function () {
         })->name('dev.ui.patterns');
     }
 });
+
+/* Fallback route to serve uploaded public storage files (images/retur/etc.) on hosting without symlink dependence */
+Route::get('/storage/{path}', function ($path) {
+    $cleanPath = ltrim($path, '/');
+    if (str_starts_with($cleanPath, 'public/')) {
+        $cleanPath = substr($cleanPath, 7);
+    }
+    $fullPath = storage_path('app/public/' . $cleanPath);
+    if (! file_exists($fullPath)) {
+        $fullPath = storage_path('app/' . $cleanPath);
+    }
+    if (! file_exists($fullPath)) {
+        abort(404);
+    }
+    $mime = mime_content_type($fullPath) ?: 'image/jpeg';
+    return response()->file($fullPath, ['Content-Type' => $mime]);
+})->where('path', '.*')->name('storage.fallback');

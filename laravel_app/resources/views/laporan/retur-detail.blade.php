@@ -122,11 +122,26 @@
                     Foto Barang Bukti
                 </div>
                 <div class="card-body d-flex flex-column align-items-center justify-content-center text-center p-4">
-                    @if($retur->foto)
+                    @php
+                        $fotoPath = $retur->foto;
+                        if ($fotoPath) {
+                            $fotoPath = ltrim($fotoPath, '/');
+                            if (str_starts_with($fotoPath, 'storage/')) {
+                                $fotoPath = substr($fotoPath, 8);
+                            }
+                            if (str_starts_with($fotoPath, 'public/')) {
+                                $fotoPath = substr($fotoPath, 7);
+                            }
+                            $fotoUrl = asset('storage/' . $fotoPath);
+                        } else {
+                            $fotoUrl = null;
+                        }
+                    @endphp
+                    @if($fotoUrl)
                         <div class="w-100 overflow-hidden rounded-3 mb-3 border" style="max-height: 350px;">
-                            <img src="{{ asset('storage/' . $retur->foto) }}" alt="Foto Bukti Retur" class="img-fluid w-100" style="object-fit: contain; max-height: 350px;">
+                            <img src="{{ $fotoUrl }}" alt="Foto Bukti Retur" class="img-fluid w-100" style="object-fit: contain; max-height: 350px;">
                         </div>
-                        <a href="{{ asset('storage/' . $retur->foto) }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary px-3 shadow-sm">
+                        <a href="{{ $fotoUrl }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary px-3 shadow-sm">
                             Lihat Resolusi Penuh
                         </a>
                     @else
