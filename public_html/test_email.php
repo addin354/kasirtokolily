@@ -22,14 +22,21 @@ require $laravelAppPath . '/vendor/autoload.php';
 /** @var Application $app */
 $app = require_once $laravelAppPath . '/bootstrap/app.php';
 
+// HAPUS CACHE CONFIG SEBELUM BOOTSTRAP agar Laravel wajib membaca ulang .env!
+$cacheFiles = [
+    $laravelAppPath . '/bootstrap/cache/config.php',
+    $laravelAppPath . '/bootstrap/cache/routes-v7.php',
+    $laravelAppPath . '/bootstrap/cache/services.php',
+    $laravelAppPath . '/bootstrap/cache/packages.php',
+];
+foreach ($cacheFiles as $file) {
+    if (file_exists($file)) {
+        @unlink($file);
+    }
+}
+
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
-
-// Clear config cache if exists
-$configCacheFile = $laravelAppPath . '/bootstrap/cache/config.php';
-if (file_exists($configCacheFile)) {
-    @unlink($configCacheFile);
-}
 
 echo "<div style='font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 30px auto; border: 1px solid #ddd; border-radius: 8px;'>";
 echo "<h2>✉️ Kasir Toko Lily - Uji Coba Pengiriman Email (SMTP Test)</h2>";
@@ -54,9 +61,8 @@ echo "</table>";
 
 if ($mailer !== 'smtp') {
     echo "<div style='background: #fff3cd; color: #856404; padding: 15px; border-radius: 6px; border: 1px solid #ffeeba; margin-bottom: 20px;'>";
-    echo "⚠️ <strong>PERHATIAN: Mailer Driver Anda saat ini adalah '{$mailer}' (BUKAN 'smtp').</strong><br>";
-    echo "Email TIDAK DIKIRIM ke Gmail penerima, melainkan hanya ditulis ke file log lokal di server!<br>";
-    echo "<strong>Solusi:</strong> Di file <code>laravel_app/.env</code> di Hostinger, ubah baris <code>MAIL_MAILER=log</code> menjadi <code>MAIL_MAILER=smtp</code>.";
+    echo "⚠️ <strong>PERHATIAN: Mailer Driver saat ini dibaca sebagai '{$mailer}'.</strong><br>";
+    echo "Pastikan Anda sudah mengklik tombol <strong>Simpan (Disket di kanan atas)</strong> di File Manager Hostinger setelah mengedit <code>.env</code>.";
     echo "</div>";
 }
 
@@ -71,7 +77,7 @@ try {
         echo "<p>Silakan periksa Inbox atau folder Spam Gmail Anda.</p>";
     } else {
         echo "<h3 style='color: #856404; background: #fff3cd; padding: 12px; border-radius: 6px;'>⚠️ TERSIMPAN DI LOG SERVER (TIDAK MASUK GMAIL)</h3>";
-        echo "<p>Karena MAIL_MAILER masih <code>{$mailer}</code>, email ini hanya ditulis di log server. Ubah <code>MAIL_MAILER=smtp</code> di .env agar masuk ke Gmail.</p>";
+        echo "<p>Pastikan file .env sudah disimpan di Hostinger, lalu refresh halaman ini.</p>";
     }
 } catch (\Throwable $e) {
     echo "<h3 style='color: red; background: #fde8e8; padding: 12px; border-radius: 6px;'>✗ GAGAL: Terjadi kesalahan saat mengirim email.</h3>";
