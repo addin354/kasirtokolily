@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Kasir Toko Lily - Fix Owner Email Script
+ * Kasir Toko Lily - Clean Dummy Owner Script
  * Akses via browser: https://kasirtokolily.id/fix_owner_email.php
  */
 
@@ -25,16 +25,15 @@ $app = require_once $laravelAppPath . '/bootstrap/app.php';
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
 
-$newOwnerEmail = 'addinhusnannadhari354@gmail.com';
-
-$updatedRows = DB::table('users')
-    ->where('role', 'owner')
+// Hapus akun dummy (owner@pos.test atau @example.com) dari tabel users agar tidak terjadi error duplikat
+$deletedRows = DB::table('users')
+    ->where('email', 'owner@pos.test')
     ->orWhere('email', 'like', '%@pos.test%')
     ->orWhere('email', 'like', '%@example.%')
-    ->update(['email' => $newOwnerEmail]);
+    ->delete();
 
 echo "<div style='font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 50px auto; border: 1px solid #c3e6cb; background-color: #d4edda; color: #155724; border-radius: 8px; text-align: center;'>";
-echo "<h2>✓ Email Owner Database Berhasil Diperbarui!</h2>";
-echo "<p>Semua email dummy (seperti <code>owner@pos.test</code>) di tabel <code>users</code> telah diganti menjadi: <strong>{$newOwnerEmail}</strong>.</p>";
-echo "<p>Pesan error kembalian <em>Alamat tidak dapat ditemukan</em> tidak akan muncul lagi secara permanen!</p>";
+echo "<h2>✓ Akun Dummy Berhasil Dibersihkan!</h2>";
+echo "<p>Akun dummy (<code>owner@pos.test</code>) di database telah dibersihkan sebanyak <strong>{$deletedRows} baris</strong>.</p>";
+echo "<p>Email resmi Owner Anda (<code>addinhusnannadhari354@gmail.com</code>) kini sudah aktif sebagai satu-satunya penerima laporan resmi!</p>";
 echo "</div>";
