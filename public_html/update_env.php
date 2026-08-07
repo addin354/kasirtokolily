@@ -34,7 +34,6 @@ STOK_ALERT_WA_OWNER_TO=62812xxxxxxxxxx
 STOK_ALERT_WA_TO=62812xxxxxxxxxx
 SALDO_AWAL_KAS=0
 
-# Admin toko: true = boleh lihat laporan penjualan & laba. Owner selalu punya akses penuh.
 ADMIN_TOKO_LIHAT_LAPORAN=true
 
 APP_LOCALE=en
@@ -75,9 +74,10 @@ QUEUE_CONNECTION=sync
 CACHE_STORE=file
 
 # -------------------------------------------------------------------
-# SMTP GMAIL CONFIGURATION (PORT 465 SSL)
+# KONFIGURASI EMAIL (SMTP)
 # -------------------------------------------------------------------
 MAIL_MAILER=smtp
+MAIL_SCHEME=null
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=465
 MAIL_USERNAME=addinhusnannadhari354@gmail.com
@@ -86,19 +86,12 @@ MAIL_ENCRYPTION=ssl
 MAIL_FROM_ADDRESS=addinhusnannadhari354@gmail.com
 MAIL_FROM_NAME="Toko Lily Sembako"
 
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-AWS_DEFAULT_REGION=us-east-1
-AWS_BUCKET=
-AWS_USE_PATH_STYLE_ENDPOINT=false
-
 VITE_APP_NAME="\${APP_NAME}"
 ENV;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['env_content'])) {
     $newContent = $_POST['env_content'];
     if (file_put_contents($envPath, $newContent) !== false) {
-        // Clear bootstrap config cache if exists
         $cacheFile = $laravelAppPath . '/bootstrap/cache/config.php';
         if (file_exists($cacheFile)) {
             @unlink($cacheFile);
@@ -111,7 +104,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['env_content'])) {
     }
 }
 
-$currentContent = file_exists($envPath) ? file_get_contents($envPath) : $defaultEnvContent;
+$currentContent = file_exists($envPath) ? file_get_contents($envPath) : '';
+
+if (empty(trim($currentContent)) || !str_contains($currentContent, 'MAIL_MAILER')) {
+    $currentContent = $defaultEnvContent;
+}
 
 ?>
 <!DOCTYPE html>
