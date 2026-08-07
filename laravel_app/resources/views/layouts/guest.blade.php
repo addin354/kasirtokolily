@@ -13,16 +13,17 @@
 <body class="bg-light">
     <div class="min-vh-100 d-flex align-items-center justify-content-center py-4 px-3">
         <div class="w-100" style="max-width: 420px;">
-            <div class="text-center mb-4">
+            <div class="text-center mb-4 d-flex flex-column align-items-center justify-content-center">
                 <img
                     src="{{ asset('logo.png') }}"
                     alt="Logo Lily Sembako"
-                    class="rounded-circle shadow-sm"
-                    width="96"
-                    height="96"
+                    class="rounded-circle shadow-sm mx-auto d-block mb-3"
+                    width="100"
+                    height="100"
+                    style="object-fit: cover; display: block;"
                 >
-                <h1 class="h3 fw-semibold text-dark mt-3 mb-1">Lily Sembako</h1>
-                <p class="text-muted small mb-0">{{ config('app.name', 'POS Kasir') }}</p>
+                <h1 class="h3 fw-semibold text-dark mb-1 text-center">Lily Sembako</h1>
+                <p class="text-muted small mb-0 text-center">{{ config('app.name', 'POS Kasir') }}</p>
             </div>
 
             <div class="card shadow border-0">
