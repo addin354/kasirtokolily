@@ -129,16 +129,16 @@
                 <p class="text-muted p-4 mb-0 text-center">Tidak ada catatan transaksi penjualan pada periode ini.</p>
             @else
                 <div class="table-responsive">
-                    <table class="table table-sm table-striped table-hover mb-0 align-middle">
+                    <table class="table table-sm table-striped table-hover text-nowrap mb-0 align-middle">
                         <thead class="table-light text-uppercase small text-muted">
                         <tr>
-                            <th class="ps-3" style="width: 150px;">Tanggal</th>
-                            <th class="text-center" style="width: 150px;">Jumlah Transaksi</th>
-                            <th class="text-center" style="width: 150px;">Barang Terjual</th>
+                            <th class="ps-3">Tanggal</th>
+                            <th class="text-center">Jumlah Transaksi</th>
+                            <th class="text-center">Barang Terjual</th>
                             <th class="text-end">Omzet / Pendapatan</th>
                             <th class="text-end">HPP</th>
                             <th class="text-end">Laba Kotor</th>
-                            <th class="text-center pe-3" style="width: 100px;">Aksi</th>
+                            <th class="text-center pe-3">Aksi</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -159,7 +159,7 @@
                                     Rp {{ number_format($row['laba_kotor'], 0, ',', '.') }}
                                 </td>
                                 <td class="text-center pe-3">
-                                    <a href="{{ route('laporan.penjualan.detail', ['tanggal' => $row['tanggal']]) }}" class="btn btn-outline-primary btn-xs py-1 px-2 fw-semibold" style="font-size: 0.72rem;">
+                                    <a href="{{ route('laporan.penjualan.detail', ['tanggal' => $row['tanggal']]) }}" class="btn btn-outline-primary btn-sm py-1 px-2 fw-semibold" style="font-size: 0.75rem;">
                                         <i class="bi bi-eye"></i> Detail
                                     </a>
                                 </td>

@@ -226,16 +226,16 @@
                 <p class="text-muted p-4 mb-0 text-center">Tidak ada catatan transaksi keuangan pada periode ini.</p>
             @else
                 <div class="table-responsive">
-                    <table class="table table-sm table-striped table-hover mb-0 align-middle">
+                    <table class="table table-sm table-striped table-hover text-nowrap mb-0 align-middle">
                         <thead class="table-light text-uppercase small text-muted">
                         <tr>
-                            <th class="ps-3" style="width: 150px;">Tanggal</th>
+                            <th class="ps-3">Tanggal</th>
                             <th class="text-end">Pendapatan Penjualan</th>
                             <th class="text-end">Harga Pokok Penjualan (HPP)</th>
                             <th class="text-end">Pembelian Barang</th>
                             <th class="text-end">Pengeluaran Operasional</th>
-                            <th class="text-end" style="width: 160px;">Saldo Kas Harian</th>
-                            <th class="text-end pe-3" style="width: 180px;">Laba Bersih</th>
+                            <th class="text-end">Saldo Kas Harian</th>
+                            <th class="text-end pe-3">Laba Bersih</th>
                         </tr>
                         </thead>
                         <tbody>

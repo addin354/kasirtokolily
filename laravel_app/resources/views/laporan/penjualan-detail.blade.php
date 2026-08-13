@@ -50,15 +50,15 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
-                        <table class="table table-sm table-hover mb-0 align-middle">
-                            <thead class="table-light text-uppercase small text-muted" style="font-size: 0.72rem;">
+                        <table class="table table-sm table-hover text-nowrap mb-0 align-middle">
+                            <thead class="table-light text-uppercase small text-muted">
                             <tr>
-                                <th class="ps-3" style="width: 50px;">No</th>
-                                <th>Nama Produk</th>
-                                <th class="text-center" style="width: 120px;">Jenis Harga</th>
-                                <th class="text-center" style="width: 100px;">Qty</th>
-                                <th class="text-end" style="width: 150px;">Harga Satuan</th>
-                                <th class="text-end pe-3" style="width: 180px;">Subtotal</th>
+                                <th class="ps-3">No</th>
+                                <th class="text-wrap-cell">Nama Produk</th>
+                                <th class="text-center">Jenis Harga</th>
+                                <th class="text-center">Qty</th>
+                                <th class="text-end">Harga Satuan</th>
+                                <th class="text-end pe-3">Subtotal</th>
                             </tr>
                             </thead>
                             <tbody>
