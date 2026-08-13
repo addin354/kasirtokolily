@@ -33,14 +33,14 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="{{ asset('css/app-mobile.css') }}?v=3" rel="stylesheet">
+    <link href="{{ asset('css/app-mobile.css') }}?v=4" rel="stylesheet">
     <style>
         .navbar-dark .navbar-nav .nav-link.active { font-weight: 600; }
     </style>
     @stack('styles')
 </head>
 <body class="bg-light min-vh-100 {{ $roleThemeClass }}">
-<header class="navbar navbar-dark app-navbar app-header-role shadow-sm sticky-top">
+<header class="navbar navbar-dark app-navbar app-header-role {{ $roleThemeClass }} shadow-sm sticky-top">
     <div class="container-fluid px-2 px-sm-3 app-navbar-bar">
         <div class="d-flex align-items-center justify-content-between w-100">
             <div class="d-flex align-items-center me-auto">

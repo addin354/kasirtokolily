@@ -136,15 +136,15 @@
 
 @section('content')
     <!-- Dashboard Top Header Greetings -->
-    <div class="card border-0 shadow-sm mb-4 bg-white">
+    <div class="card border-0 shadow-sm mb-4 card-greeting-role">
         <div class="card-body p-3 p-md-4 d-flex align-items-center justify-content-between flex-wrap gap-3">
             <div>
-                <h4 class="fw-bold mb-1 text-dark">Selamat Datang, {{ auth()->user()->name }} 👋</h4>
-                <p class="text-muted mb-0 small">{{ auth()->user()->roleLabel() }} Toko Lily Sembako · Semoga transaksi hari ini berjalan lancar.</p>
+                <h4 class="fw-bold mb-1">Selamat Datang, {{ auth()->user()->name }} 👋</h4>
+                <p class="mb-0 small opacity-90">{{ auth()->user()->roleLabel() }} Toko Lily Sembako · Semoga transaksi hari ini berjalan lancar.</p>
             </div>
-            <div class="text-end bg-light px-3 py-2 rounded-3 border d-flex flex-column align-items-end justify-content-center">
-                <div class="fw-semibold text-primary" style="font-size: 0.8rem;" id="realtime-day-date">Hari, Tanggal</div>
-                <div class="fs-4 fw-bold text-dark lh-1 mt-1" id="realtime-clock">00:00:00</div>
+            <div class="text-end px-3 py-2 rounded-3 time-box-role d-flex flex-column align-items-end justify-content-center">
+                <div class="fw-semibold" style="font-size: 0.8rem;" id="realtime-day-date">Hari, Tanggal</div>
+                <div class="fs-4 fw-bold lh-1 mt-1" id="realtime-clock">00:00:00</div>
             </div>
         </div>
     </div>
