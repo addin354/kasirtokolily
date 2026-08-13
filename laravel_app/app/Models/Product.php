@@ -66,8 +66,8 @@ class Product extends Model
             'harga_jual' => 'decimal:2',
             'harga_grosir' => 'decimal:2',
             'harga_bal' => 'decimal:2',
-            'stok' => 'decimal:3',
-            'stok_minimum' => 'decimal:3',
+            'stok' => 'float',
+            'stok_minimum' => 'float',
             'isi_per_bal' => 'integer',
             'is_active' => 'boolean',
         ];

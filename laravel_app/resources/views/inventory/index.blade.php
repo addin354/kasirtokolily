@@ -405,7 +405,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const pid = parseInt(this.value);
             const found = products.find(p => p.id === pid);
             if (found) {
-                opnameStokSistem.value = found.stok;
+                opnameStokSistem.value = parseFloat(found.stok);
             } else {
                 opnameStokSistem.value = '';
             }
