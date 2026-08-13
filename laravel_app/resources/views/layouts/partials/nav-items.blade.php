@@ -96,18 +96,8 @@
             </form>
         </li>
     @elseif (auth()->user()->isAdmin())
-        {{-- ===== MENU UTAMA ===== --}}
-        <li class="nav-item mt-2">
-            <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">MENU UTAMA</span>
-        </li>
-        <li class="nav-item">
-            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-                <i class="bi bi-speedometer2 me-2"></i> Dashboard
-            </a>
-        </li>
-
         {{-- ===== MASTER DATA ===== --}}
-        <li class="nav-item mt-3">
+        <li class="nav-item mt-2">
             <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">MASTER DATA</span>
         </li>
         <li class="nav-item">
