@@ -101,6 +101,21 @@
             <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">MENU UTAMA</span>
         </li>
         <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
+                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('kasir.*') ? 'active' : '' }}" href="{{ route('kasir.index') }}">
+                <i class="bi bi-cart me-2"></i> Kasir / POS
+            </a>
+        </li>
+
+        {{-- ===== MASTER DATA ===== --}}
+        <li class="nav-item mt-3">
+            <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">MASTER DATA</span>
+        </li>
+        <li class="nav-item">
             <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('products.*', 'categories.*', 'satuans.*') ? 'active' : '' }}" href="{{ route('products.index') }}">
                 <i class="bi bi-box-seam me-2"></i> Produk
             </a>
@@ -115,20 +130,15 @@
                 <i class="bi bi-person-vcard me-2"></i> Pelanggan
             </a>
         </li>
+
+        {{-- ===== STOK & TRANSAKSI ===== --}}
+        <li class="nav-item mt-3">
+            <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">STOK & TRANSAKSI</span>
+        </li>
         <li class="nav-item">
             <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('stok-masuk.*') ? 'active' : '' }}" href="{{ route('stok-masuk.index') }}">
                 <i class="bi bi-archive me-2"></i> Inventory
             </a>
-        </li>
-        <li class="nav-item">
-            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
-                <i class="bi bi-shield-lock me-2"></i> Manajemen User
-            </a>
-        </li>
-
-        {{-- ===== LAPORAN ===== --}}
-        <li class="nav-item mt-3">
-            <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">LAPORAN</span>
         </li>
         <li class="nav-item">
             <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('pembelian.*') ? 'active' : '' }}" href="{{ route('pembelian.index') }}">
@@ -144,6 +154,11 @@
             <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.stok') ? 'active' : '' }}" href="{{ route('owner.stok') }}">
                 <i class="bi bi-boxes me-2"></i> Monitoring Stok
             </a>
+        </li>
+
+        {{-- ===== LAPORAN ===== --}}
+        <li class="nav-item mt-3">
+            <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">LAPORAN</span>
         </li>
         <li class="nav-item">
             <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('laporan.penjualan') || request()->routeIs('laporan.export.pdf') ? 'active' : '' }}" href="{{ route('laporan.penjualan') }}">
@@ -166,6 +181,16 @@
         <li class="nav-item">
             <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('laporan.retur') ? 'active' : '' }}" href="{{ route('laporan.retur') }}">
                 <i class="bi bi-arrow-counterclockwise me-2"></i> Laporan Retur
+            </a>
+        </li>
+
+        {{-- ===== PENGATURAN ===== --}}
+        <li class="nav-item mt-3">
+            <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">PENGATURAN</span>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
+                <i class="bi bi-shield-lock me-2"></i> Manajemen User
             </a>
         </li>
 
