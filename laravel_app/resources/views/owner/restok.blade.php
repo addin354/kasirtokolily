@@ -21,7 +21,7 @@
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-striped table-hover mb-0 align-middle">
+                <table class="table table-striped table-hover text-nowrap mb-0 align-middle">
                     <thead class="table-light text-uppercase small text-muted">
                     <tr>
                         <th class="ps-3">Nama Produk</th>

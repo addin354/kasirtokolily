@@ -98,7 +98,7 @@
         <div class="d-none d-md-block card shadow-sm">
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover mb-0 align-middle small">
+                    <table class="table table-striped table-hover text-nowrap mb-0 align-middle small">
                         <thead class="table-light">
                         <tr>
                             <th>Nama</th>
@@ -219,7 +219,7 @@
         <div class="d-none d-md-block card shadow-sm">
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover mb-0 align-middle">
+                    <table class="table table-striped table-hover text-nowrap mb-0 align-middle">
                         <thead class="table-light">
                         <tr>
                             <th>Nama</th>
@@ -300,7 +300,7 @@
         <div class="d-none d-md-block card shadow-sm">
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover mb-0 align-middle">
+                    <table class="table table-striped table-hover text-nowrap mb-0 align-middle">
                         <thead class="table-light">
                         <tr>
                             <th>Nama</th>

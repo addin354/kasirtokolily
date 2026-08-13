@@ -197,7 +197,7 @@
                 <p class="text-muted p-3 mb-0">Belum ada riwayat.</p>
             @else
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover mb-0 align-middle">
+                    <table class="table table-striped table-hover text-nowrap mb-0 align-middle">
                         <thead class="table-light">
                         <tr>
                             <th>Tanggal</th>
@@ -241,7 +241,7 @@
                 <p class="text-muted p-3 mb-0">Belum ada penjualan.</p>
             @else
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover mb-0 align-middle">
+                    <table class="table table-striped table-hover text-nowrap mb-0 align-middle">
                         <thead class="table-light">
                         <tr>
                             <th>Tanggal</th>

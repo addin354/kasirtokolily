@@ -163,7 +163,7 @@
     <div class="card shadow-sm border-0">
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-striped table-hover mb-0 align-middle">
+                <table class="table table-striped table-hover text-nowrap mb-0 align-middle">
                     @if($type === 'terlaris')
                         <!-- 1. Laporan 10 Produk Terlaris -->
                         <thead class="table-light text-uppercase small text-muted">

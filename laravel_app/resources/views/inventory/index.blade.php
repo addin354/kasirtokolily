@@ -118,7 +118,7 @@
                             <div class="card-header bg-white fw-bold">Riwayat Stock Opname</div>
                             <div class="card-body p-0">
                                 <div class="table-responsive">
-                                    <table class="table table-striped table-hover align-middle mb-0 small">
+                                    <table class="table table-striped table-hover text-nowrap align-middle mb-0 small">
                                         <thead class="table-light">
                                         <tr>
                                             <th class="ps-3">Tanggal</th>
@@ -228,7 +228,7 @@
                             <div class="card-header bg-white fw-bold">Riwayat Penyesuaian Stok</div>
                             <div class="card-body p-0">
                                 <div class="table-responsive">
-                                    <table class="table table-striped table-hover align-middle mb-0 small">
+                                    <table class="table table-striped table-hover text-nowrap align-middle mb-0 small">
                                         <thead class="table-light">
                                         <tr>
                                             <th class="ps-3">Tanggal</th>
@@ -336,7 +336,7 @@
                 <div class="card shadow-sm border-0">
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover align-middle mb-0 small">
+                            <table class="table table-striped table-hover text-nowrap align-middle mb-0 small">
                                 <thead class="table-light">
                                 <tr>
                                     <th class="ps-3">Tanggal</th>
