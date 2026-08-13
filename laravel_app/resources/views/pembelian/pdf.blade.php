@@ -21,9 +21,7 @@
     <table class="header-table">
         <tr>
             <td style="width: 55px; vertical-align: middle;">
-                @if(file_exists(public_path('logo.png')))
-                    <img src="{{ public_path('logo.png') }}" class="logo-img" alt="Logo">
-                @endif
+                @include('pdf.partials.logo')
             </td>
             <td style="vertical-align: middle;">
                 <div class="shop-name">Lily Sembako</div>
