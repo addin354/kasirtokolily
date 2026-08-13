@@ -105,11 +105,6 @@
                 <i class="bi bi-speedometer2 me-2"></i> Dashboard
             </a>
         </li>
-        <li class="nav-item">
-            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('kasir.*') ? 'active' : '' }}" href="{{ route('kasir.index') }}">
-                <i class="bi bi-cart me-2"></i> Kasir / POS
-            </a>
-        </li>
 
         {{-- ===== MASTER DATA ===== --}}
         <li class="nav-item mt-3">
