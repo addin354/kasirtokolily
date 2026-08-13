@@ -104,3 +104,145 @@
         padding: 0.55rem 0.65rem !important;
     }
 }
+
+/* ==========================================================================
+   ROLE-BASED THEMES (OWNER, ADMIN, KASIR)
+   ========================================================================== */
+
+/* Default Role Theme Variables */
+:root {
+    --role-theme-primary: #0284c7;
+    --role-theme-dark: #0369a1;
+    --role-theme-gradient: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+    --role-theme-subtle: #e0f2fe;
+    --role-theme-text: #0369a1;
+    --role-badge-border: rgba(2, 132, 199, 0.4);
+}
+
+/* 1. OWNER THEME: Royal Indigo / Deep Purple (Luxury & Governance) */
+body.role-theme-owner {
+    --role-theme-primary: #312e81;
+    --role-theme-dark: #1e1b4b;
+    --role-theme-gradient: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+    --role-theme-subtle: #e0e7ff;
+    --role-theme-text: #3730a3;
+    --role-badge-border: #4338ca;
+}
+
+/* 2. ADMIN THEME: Corporate Ocean Blue (Management & Control) */
+body.role-theme-admin {
+    --role-theme-primary: #0284c7;
+    --role-theme-dark: #0369a1;
+    --role-theme-gradient: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+    --role-theme-subtle: #e0f2fe;
+    --role-theme-text: #0369a1;
+    --role-badge-border: #0284c7;
+}
+
+/* 3. KASIR THEME: Energetic Emerald Green (POS & Cashier Focus) */
+body.role-theme-kasir {
+    --role-theme-primary: #047857;
+    --role-theme-dark: #065f46;
+    --role-theme-gradient: linear-gradient(135deg, #065f46 0%, #047857 100%);
+    --role-theme-subtle: #d1fae5;
+    --role-theme-text: #065f46;
+    --role-badge-border: #059669;
+}
+
+/* 4. PELANGGAN THEME: Modern Slate Teal */
+body.role-theme-pelanggan {
+    --role-theme-primary: #0f766e;
+    --role-theme-dark: #115e59;
+    --role-theme-gradient: linear-gradient(135deg, #115e59 0%, #0f766e 100%);
+    --role-theme-subtle: #ccfbf1;
+    --role-theme-text: #0f766e;
+    --role-badge-border: #0f766e;
+}
+
+/* Header Navbar Theme Styling */
+.app-header-role {
+    background: var(--role-theme-gradient) !important;
+    border-bottom: 2px solid var(--role-badge-border);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+    transition: all 0.3s ease;
+}
+
+#appMobileNav {
+    background: var(--role-theme-dark) !important;
+}
+
+/* Role Indicator Pill Badge in Navbar Top Right */
+.role-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 50rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Sidebar Role Card Banner */
+.sidebar-role-card {
+    background: var(--role-theme-subtle);
+    border: 1px solid var(--role-badge-border);
+    border-radius: 0.65rem;
+    padding: 0.75rem 0.85rem;
+    margin-bottom: 1rem;
+    color: var(--role-theme-text);
+}
+
+.sidebar-role-card .role-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--role-theme-primary);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+/* Custom Primary Button Theme per Role */
+body.role-theme-owner .btn-primary {
+    background-color: #4338ca !important;
+    border-color: #3730a3 !important;
+}
+body.role-theme-owner .btn-primary:hover {
+    background-color: #3730a3 !important;
+}
+
+body.role-theme-admin .btn-primary {
+    background-color: #0284c7 !important;
+    border-color: #0369a1 !important;
+}
+body.role-theme-admin .btn-primary:hover {
+    background-color: #0369a1 !important;
+}
+
+body.role-theme-kasir .btn-primary {
+    background-color: #059669 !important;
+    border-color: #047857 !important;
+}
+body.role-theme-kasir .btn-primary:hover {
+    background-color: #047857 !important;
+}
+
+/* Sidebar Active Nav Link Highlight */
+.app-sidebar-nav .nav-link.active {
+    color: var(--role-theme-primary) !important;
+    font-weight: 700 !important;
+    border-left: 4px solid var(--role-theme-primary);
+    padding-left: 0.6rem !important;
+    background-color: var(--role-theme-subtle) !important;
+    border-radius: 0 0.5rem 0.5rem 0;
+}

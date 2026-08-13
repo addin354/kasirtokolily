@@ -1,3 +1,23 @@
+@php
+    $userRole = auth()->check() ? auth()->user()->role : 'guest';
+    $roleThemeClass = match($userRole) {
+        'owner' => 'role-theme-owner',
+        'admin' => 'role-theme-admin',
+        'kasir' => 'role-theme-kasir',
+        'pelanggan' => 'role-theme-pelanggan',
+        default => 'role-theme-admin',
+    };
+    
+    $roleBadgeIcon = match($userRole) {
+        'owner' => 'bi-crown-fill',
+        'admin' => 'bi-shield-lock-fill',
+        'kasir' => 'bi-cart-check-fill',
+        'pelanggan' => 'bi-person-fill',
+        default => 'bi-person-badge-fill',
+    };
+    
+    $roleLabel = auth()->check() ? auth()->user()->roleLabel() : 'Tamu';
+@endphp
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -13,35 +33,46 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="{{ asset('css/app-mobile.css') }}?v=2" rel="stylesheet">
+    <link href="{{ asset('css/app-mobile.css') }}?v=3" rel="stylesheet">
     <style>
         .navbar-dark .navbar-nav .nav-link.active { font-weight: 600; }
     </style>
     @stack('styles')
 </head>
-<body class="bg-light min-vh-100">
-<header class="navbar navbar-dark bg-primary shadow-sm sticky-top app-navbar">
+<body class="bg-light min-vh-100 {{ $roleThemeClass }}">
+<header class="navbar navbar-dark app-navbar app-header-role shadow-sm sticky-top">
     <div class="container-fluid px-2 px-sm-3 app-navbar-bar">
-        <div class="d-flex align-items-center w-100">
-            <button
-                class="navbar-toggler d-lg-none border-0 rounded-2 p-2 me-1 app-hamburger"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#appMobileNav"
-                aria-controls="appMobileNav"
-                aria-label="Buka menu"
-            >
-                <span class="navbar-toggler-icon" aria-hidden="true"></span>
-            </button>
-            <a class="navbar-brand d-flex align-items-center fw-bold me-0 text-truncate" style="max-width: min(22rem, 75vw);" href="{{ auth()->check() ? route(auth()->user()->defaultDashboardRoute()) : url('/') }}">
-                <img src="{{ asset('logo.png') }}" alt="Logo Toko Lily Sembako" width="42" height="42" class="me-2 rounded-circle flex-shrink-0 bg-white p-1 shadow-sm" style="object-fit: cover;" loading="lazy" decoding="async">
-                <span class="text-truncate fs-5">Toko Lily Sembako</span>
-            </a>
+        <div class="d-flex align-items-center justify-content-between w-100">
+            <div class="d-flex align-items-center me-auto">
+                <button
+                    class="navbar-toggler d-lg-none border-0 rounded-2 p-2 me-1 app-hamburger"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#appMobileNav"
+                    aria-controls="appMobileNav"
+                    aria-label="Buka menu"
+                >
+                    <span class="navbar-toggler-icon" aria-hidden="true"></span>
+                </button>
+                <a class="navbar-brand d-flex align-items-center fw-bold me-0 text-truncate" style="max-width: min(22rem, 75vw);" href="{{ auth()->check() ? route(auth()->user()->defaultDashboardRoute()) : url('/') }}">
+                    <img src="{{ asset('logo.png') }}" alt="Logo Toko Lily Sembako" width="42" height="42" class="me-2 rounded-circle flex-shrink-0 bg-white p-1 shadow-sm" style="object-fit: cover;" loading="lazy" decoding="async">
+                    <span class="text-truncate fs-5">Toko Lily Sembako</span>
+                </a>
+            </div>
+
+            @auth
+                <div class="d-flex align-items-center gap-2">
+                    <span class="role-badge-pill" title="Role Pengguna: {{ $roleLabel }}">
+                        <i class="bi {{ $roleBadgeIcon }}"></i>
+                        <span>{{ strtoupper($roleLabel) }}</span>
+                    </span>
+                </div>
+            @endauth
         </div>
     </div>
 </header>
 
-<div class="collapse d-lg-none bg-primary border-top border-white border-opacity-25 shadow-sm" id="appMobileNav">
+<div class="collapse d-lg-none border-top border-white border-opacity-25 shadow-sm" id="appMobileNav">
     <div class="px-2 px-sm-3 py-2">
         <div class="small text-uppercase text-white-50 fw-semibold mb-2">Menu</div>
         <ul class="navbar-nav flex-column gap-1 w-100 app-offcanvas-nav">
@@ -55,6 +86,17 @@
         @auth
             <aside class="d-none d-lg-flex col-lg-3 col-xl-2 bg-white border-end min-vh-100">
                 <div class="w-100 p-3">
+                    <div class="sidebar-role-card d-flex align-items-center gap-2">
+                        <div class="role-avatar shadow-sm">
+                            <i class="bi {{ $roleBadgeIcon }}"></i>
+                        </div>
+                        <div class="overflow-hidden">
+                            <div class="fw-bold text-truncate" style="font-size: 0.88rem;">{{ auth()->user()->name }}</div>
+                            <div class="small opacity-75 text-truncate" style="font-size: 0.72rem; text-transform: uppercase; font-weight: 600;">
+                                {{ $roleLabel }}
+                            </div>
+                        </div>
+                    </div>
                     <div class="small text-uppercase text-muted fw-semibold mb-2">Navigasi</div>
                     <ul class="navbar-nav app-sidebar-nav">
                         @include('layouts.partials.nav-items', ['navMobile' => false, 'navSidebar' => true])
