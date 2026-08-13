@@ -33,9 +33,184 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="{{ asset('css/app-mobile.css') }}?v=4" rel="stylesheet">
+    <link href="{{ asset('css/app-mobile.css') }}?v=5" rel="stylesheet">
     <style>
         .navbar-dark .navbar-nav .nav-link.active { font-weight: 600; }
+
+        /* ==========================================================================
+           BULLETPROOF ROLE-BASED THEME HEADERS (OWNER, ADMIN, KASIR)
+           ========================================================================== */
+
+        /* 1. OWNER THEME: Royal Indigo / Deep Purple (Luxury Governance) */
+        .role-theme-owner .app-header-role,
+        header.app-header-role.role-theme-owner,
+        header.app-navbar.role-theme-owner {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%) !important;
+            background-color: #312e81 !important;
+            border-bottom: 2.5px solid #4338ca !important;
+            box-shadow: 0 4px 14px rgba(30, 27, 75, 0.25) !important;
+        }
+
+        body.role-theme-owner {
+            --role-theme-primary: #312e81;
+            --role-theme-subtle: #e0e7ff;
+            --role-theme-text: #3730a3;
+        }
+
+        body.role-theme-owner .btn-primary {
+            background-color: #4338ca !important;
+            border-color: #3730a3 !important;
+        }
+        body.role-theme-owner .btn-primary:hover {
+            background-color: #3730a3 !important;
+        }
+
+        .role-theme-owner #appMobileNav {
+            background-color: #1e1b4b !important;
+        }
+
+        /* 2. ADMIN THEME: Corporate Ocean Blue (Management Control) */
+        .role-theme-admin .app-header-role,
+        header.app-header-role.role-theme-admin,
+        header.app-navbar.role-theme-admin {
+            background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%) !important;
+            background-color: #0284c7 !important;
+            border-bottom: 2.5px solid #38bdf8 !important;
+            box-shadow: 0 4px 14px rgba(3, 105, 161, 0.25) !important;
+        }
+
+        body.role-theme-admin {
+            --role-theme-primary: #0284c7;
+            --role-theme-subtle: #e0f2fe;
+            --role-theme-text: #0369a1;
+        }
+
+        body.role-theme-admin .btn-primary {
+            background-color: #0284c7 !important;
+            border-color: #0369a1 !important;
+        }
+        body.role-theme-admin .btn-primary:hover {
+            background-color: #0369a1 !important;
+        }
+
+        .role-theme-admin #appMobileNav {
+            background-color: #0369a1 !important;
+        }
+
+        /* 3. KASIR THEME: Energetic Emerald Green (POS Focus) */
+        .role-theme-kasir .app-header-role,
+        header.app-header-role.role-theme-kasir,
+        header.app-navbar.role-theme-kasir {
+            background: linear-gradient(135deg, #065f46 0%, #047857 100%) !important;
+            background-color: #047857 !important;
+            border-bottom: 2.5px solid #10b981 !important;
+            box-shadow: 0 4px 14px rgba(6, 95, 70, 0.25) !important;
+        }
+
+        body.role-theme-kasir {
+            --role-theme-primary: #047857;
+            --role-theme-subtle: #d1fae5;
+            --role-theme-text: #065f46;
+        }
+
+        body.role-theme-kasir .btn-primary {
+            background-color: #059669 !important;
+            border-color: #047857 !important;
+        }
+        body.role-theme-kasir .btn-primary:hover {
+            background-color: #047857 !important;
+        }
+
+        .role-theme-kasir #appMobileNav {
+            background-color: #065f46 !important;
+        }
+
+        /* Header Text & Logo forced visibility on role background */
+        .app-header-role .navbar-brand,
+        .app-header-role .navbar-brand span,
+        .app-header-role .nav-link,
+        .app-header-role .navbar-toggler-icon {
+            color: #ffffff !important;
+        }
+
+        /* Role Indicator Pill Badge in Navbar Top Right */
+        .role-badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.4rem 0.85rem;
+            border-radius: 50rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.22) !important;
+            border: 1px solid rgba(255, 255, 255, 0.4) !important;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Sidebar Role Card Banner */
+        .sidebar-role-card {
+            background: var(--role-theme-subtle);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 0.65rem;
+            padding: 0.75rem 0.85rem;
+            margin-bottom: 1rem;
+            color: var(--role-theme-text);
+        }
+
+        .sidebar-role-card .role-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--role-theme-primary);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        /* Sidebar Active Nav Link Highlight */
+        .app-sidebar-nav .nav-link.active {
+            color: var(--role-theme-primary) !important;
+            font-weight: 700 !important;
+            border-left: 4px solid var(--role-theme-primary);
+            padding-left: 0.6rem !important;
+            background-color: var(--role-theme-subtle) !important;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+
+        /* Vibrant Greeting Banners per Role */
+        body.role-theme-owner .card-greeting-role {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%) !important;
+            color: #ffffff !important;
+        }
+
+        body.role-theme-admin .card-greeting-role {
+            background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%) !important;
+            color: #ffffff !important;
+        }
+
+        body.role-theme-kasir .card-greeting-role {
+            background: linear-gradient(135deg, #065f46 0%, #047857 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .card-greeting-role h4,
+        .card-greeting-role p,
+        .card-greeting-role div {
+            color: #ffffff !important;
+        }
+
+        .card-greeting-role .time-box-role {
+            background: rgba(255, 255, 255, 0.18) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            backdrop-filter: blur(4px);
+        }
     </style>
     @stack('styles')
 </head>
