@@ -316,11 +316,33 @@
             </div>
 
             @auth
-                <div class="d-flex align-items-center gap-2">
-                    <span class="role-badge-pill" title="Role Pengguna: {{ $roleLabel }}">
-                        <i class="bi {{ $roleBadgeIcon }}"></i>
-                        <span>{{ strtoupper($roleLabel) }}</span>
-                    </span>
+                <div class="dropdown">
+                    <button class="btn role-badge-pill border-0 text-white d-flex align-items-center gap-2 dropdown-toggle py-2 px-3 shadow-sm" type="button" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+                        <i class="bi {{ $roleBadgeIcon }} fs-6"></i>
+                        <span class="fw-bold">{{ strtoupper($roleLabel) }}</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2 p-2" aria-labelledby="userMenuDropdown" style="min-width: 220px; border-radius: 12px; z-index: 1060;">
+                        <li class="px-3 py-2 bg-light rounded mb-2 border-bottom">
+                            <div class="fw-bold text-dark text-truncate">{{ auth()->user()->name }}</div>
+                            <div class="small text-muted text-uppercase" style="font-size: 0.75rem;">{{ $roleLabel }}</div>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center gap-2 py-2 rounded" href="{{ route('profile.edit') }}">
+                                <i class="bi bi-person-fill text-primary"></i>
+                                <span>Profil Saya</span>
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider my-1"></li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}" id="logout-form-top">
+                                @csrf
+                                <button type="submit" class="dropdown-item d-flex align-items-center gap-2 py-2 text-danger rounded w-100 border-0 bg-transparent">
+                                    <i class="bi bi-box-arrow-right text-danger"></i>
+                                    <span class="fw-semibold">Keluar</span>
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
             @endauth
         </div>

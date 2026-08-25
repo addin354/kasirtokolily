@@ -73,28 +73,7 @@
             </a>
         </li>
 
-        {{-- ===== AKUN ===== --}}
-        <li class="nav-item mt-3">
-            <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">AKUN</span>
-        </li>
-        <li class="nav-item">
-            <span class="nav-link disabled small {{ $navMobile ? 'text-white-50' : 'text-muted px-0' }}" style="font-size: 0.85rem;">
-                <i class="bi bi-person-badge me-2"></i> {{ auth()->user()->name }} ({{ auth()->user()->roleLabel() }})
-            </span>
-        </li>
-        <li class="nav-item">
-            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('profile.edit') ? 'active' : '' }}" href="{{ route('profile.edit') }}">
-                <i class="bi bi-person me-2"></i> Profil
-            </a>
-        </li>
-        <li class="nav-item @if($navMobile) w-100 @endif mt-1">
-            <form method="POST" action="{{ route('logout') }}" class="d-inline w-100">
-                @csrf
-                <button type="submit" class="btn {{ $navSidebar ? 'btn-outline-secondary w-100 text-start border-0 ps-2 py-1' : 'btn-outline-light w-100 btn-lg-touch' }}">
-                    <i class="bi bi-box-arrow-right me-2"></i> Keluar
-                </button>
-            </form>
-        </li>
+
     @elseif (auth()->user()->isAdmin())
         {{-- ===== MASTER DATA ===== --}}
         <li class="nav-item mt-2">
@@ -179,28 +158,7 @@
             </a>
         </li>
 
-        {{-- ===== AKUN ===== --}}
-        <li class="nav-item mt-3">
-            <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">AKUN</span>
-        </li>
-        <li class="nav-item">
-            <span class="nav-link disabled small {{ $navMobile ? 'text-white-50' : 'text-muted px-0' }}" style="font-size: 0.85rem;">
-                <i class="bi bi-person-badge me-2"></i> {{ auth()->user()->name }} ({{ auth()->user()->roleLabel() }})
-            </span>
-        </li>
-        <li class="nav-item">
-            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('profile.edit') ? 'active' : '' }}" href="{{ route('profile.edit') }}">
-                <i class="bi bi-person me-2"></i> Profil
-            </a>
-        </li>
-        <li class="nav-item @if($navMobile) w-100 @endif mt-1">
-            <form method="POST" action="{{ route('logout') }}" class="d-inline w-100">
-                @csrf
-                <button type="submit" class="btn {{ $navSidebar ? 'btn-outline-secondary w-100 text-start border-0 ps-2 py-1' : 'btn-outline-light w-100 btn-lg-touch' }}">
-                    <i class="bi bi-box-arrow-right me-2"></i> Keluar
-                </button>
-            </form>
-        </li>
+
     @elseif (auth()->user()->isKasir())
         <!-- MENU UTAMA -->
         <li class="nav-item mt-2">
@@ -225,28 +183,7 @@
                 <i class="bi bi-arrow-counterclockwise me-2"></i> Laporan Retur
             </a>
         </li>
-        <!-- AKUN -->
-        <li class="nav-item mt-3">
-            <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">AKUN</span>
-        </li>
-        <li class="nav-item">
-            <span class="nav-link disabled small {{ $navMobile ? 'text-white-50' : 'text-muted px-0' }}" style="font-size: 0.85rem;">
-                <i class="bi bi-person-badge me-2"></i> {{ auth()->user()->name }} ({{ auth()->user()->roleLabel() }})
-            </span>
-        </li>
-        <li class="nav-item">
-            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('profile.edit') ? 'active' : '' }}" href="{{ route('profile.edit') }}">
-                <i class="bi bi-person me-2"></i> Profil
-            </a>
-        </li>
-        <li class="nav-item @if($navMobile) w-100 @endif mt-1">
-            <form method="POST" action="{{ route('logout') }}" class="d-inline w-100">
-                @csrf
-                <button type="submit" class="btn {{ $navSidebar ? 'btn-outline-secondary w-100 text-start border-0 ps-2 py-1' : 'btn-outline-light w-100 btn-lg-touch' }}">
-                    <i class="bi bi-box-arrow-right me-2"></i> Keluar
-                </button>
-            </form>
-        </li>
+
     @elseif (auth()->user()->isPelanggan())
         <li class="nav-item">
             <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('katalog.*') ? 'active' : '' }}" href="{{ route('katalog.index') }}">Katalog produk</a>
