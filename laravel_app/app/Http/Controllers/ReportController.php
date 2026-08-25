@@ -167,7 +167,8 @@ class ReportController extends Controller
 
     private function shouldMarkAsRead(User $user, Report $report): bool
     {
-        if (! $user->isOwner() && ! $user->isAdmin()) {
+        // Hanya Owner yang dapat merubah status laporan kasir (dari 'terkirim' ke 'dibaca')
+        if (! $user->isOwner()) {
             return false;
         }
 

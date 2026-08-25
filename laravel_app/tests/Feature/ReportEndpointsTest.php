@@ -472,5 +472,32 @@ class ReportEndpointsTest extends TestCase
             return $mail->hasTo('owner@tokolily.id');
         });
     }
+
+    public function test_only_owner_can_update_kasir_report_status_admin_cannot(): void
+    {
+        $owner = User::factory()->create(['role' => 'owner']);
+        $admin = User::factory()->create(['role' => 'admin']);
+        $kasir = User::factory()->create(['role' => 'kasir']);
+
+        $report = \App\Models\Report::create([
+            'user_id' => $kasir->id,
+            'type' => 'harian',
+            'report_date' => '2026-08-25',
+            'data' => ['total_revenue' => 100000, 'total_transactions' => 2],
+            'status' => \App\Models\Report::STATUS_TERKIRIM,
+        ]);
+
+        // Admin views report -> status remains 'terkirim'
+        $this->actingAs($admin);
+        $responseAdmin = $this->get(route('reports.show', $report));
+        $responseAdmin->assertOk();
+        $this->assertEquals(\App\Models\Report::STATUS_TERKIRIM, $report->fresh()->status);
+
+        // Owner views report -> status updates to 'dibaca'
+        $this->actingAs($owner);
+        $responseOwner = $this->get(route('reports.show', $report));
+        $responseOwner->assertOk();
+        $this->assertEquals(\App\Models\Report::STATUS_DIBACA, $report->fresh()->status);
+    }
 }
 
