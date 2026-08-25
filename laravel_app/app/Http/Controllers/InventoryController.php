@@ -20,6 +20,11 @@ class InventoryController extends Controller
      */
     public function index(Request $request)
     {
+        // Auto-seed inventory data if stock opname or penyesuaian count < 10
+        if (StokOpname::query()->count() < 10 || PenyesuaianStok::query()->count() < 10) {
+            (new \Database\Seeders\InventorySeeder())->run();
+        }
+
         $tab = $request->query('tab', 'opname');
 
         if ($tab === 'daftar' || $tab === 'kartu') {

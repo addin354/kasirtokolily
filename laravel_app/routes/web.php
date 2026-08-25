@@ -28,7 +28,8 @@ Route::get('/jalankan-migrasi', function() {
     \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
     (new \Database\Seeders\SupplierSeeder())->run();
     (new \Database\Seeders\TransaksiSeeder())->run();
-    return "Migrasi database, Seeder supplier & Seeder transaksi berhasil dijalankan! Total transaksi: " . \App\Models\Transaksi::count();
+    (new \Database\Seeders\InventorySeeder())->run();
+    return "Migrasi database, Seeder supplier, transaksi & inventory berhasil dijalankan!";
 });
 
 Route::get('/jalankan-seeder-supplier', function() {
@@ -39,6 +40,11 @@ Route::get('/jalankan-seeder-supplier', function() {
 Route::get('/jalankan-seeder-transaksi', function() {
     (new \Database\Seeders\TransaksiSeeder())->run();
     return "Seeder transaksi penjualan berhasil dijalankan! Total transaksi: " . \App\Models\Transaksi::count();
+});
+
+Route::get('/jalankan-seeder-inventory', function() {
+    (new \Database\Seeders\InventorySeeder())->run();
+    return "Seeder inventory (Stock Opname & Penyesuaian) berhasil dijalankan! Opname: " . \App\Models\StokOpname::count() . ", Penyesuaian: " . \App\Models\PenyesuaianStok::count();
 });
 
 Route::get('/', function () {
