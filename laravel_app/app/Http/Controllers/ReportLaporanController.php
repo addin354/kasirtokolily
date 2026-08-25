@@ -56,7 +56,7 @@ class ReportLaporanController extends Controller
         $summaryData = $summaryQuery
             ->select(
                 'r.qty',
-                DB::raw('COALESCE(dt.harga, p.harga_jual, 0) as harga')
+                DB::raw('COALESCE(dt.harga, p.harga_jual, p2.harga_jual, 0) as harga')
             )
             ->get();
 
@@ -81,8 +81,8 @@ class ReportLaporanController extends Controller
                 'r.status',
                 'r.foto',
                 'u.name as kasir_nama',
-                DB::raw('COALESCE(dt.harga, p.harga_jual, 0) as harga'),
-                DB::raw('(r.qty * COALESCE(dt.harga, p.harga_jual, 0)) as total')
+                DB::raw('COALESCE(dt.harga, p.harga_jual, p2.harga_jual, 0) as harga'),
+                DB::raw('(r.qty * COALESCE(dt.harga, p.harga_jual, p2.harga_jual, 0)) as total')
             )
             ->orderByDesc('r.tanggal_retur')
             ->orderByDesc('r.id')
@@ -121,6 +121,10 @@ class ReportLaporanController extends Controller
         $product = null;
         if (!empty($validated['produk_id'])) {
             $product = Product::query()->find($validated['produk_id']);
+        }
+        if (!$product && !empty($validated['produk_nama'])) {
+            $product = Product::query()->where('nama', $validated['produk_nama'])->first()
+                    ?? Product::query()->where('nama', 'LIKE', '%' . $validated['produk_nama'] . '%')->first();
         }
 
         $productName = $product?->nama ?? $validated['produk_nama'];
@@ -209,6 +213,10 @@ class ReportLaporanController extends Controller
         if (!empty($validated['produk_id'])) {
             $product = Product::query()->find($validated['produk_id']);
         }
+        if (!$product && !empty($validated['produk_nama'])) {
+            $product = Product::query()->where('nama', $validated['produk_nama'])->first()
+                    ?? Product::query()->where('nama', 'LIKE', '%' . $validated['produk_nama'] . '%')->first();
+        }
         $productName = $product?->nama ?? $validated['produk_nama'];
 
         $payload = [
@@ -246,6 +254,7 @@ class ReportLaporanController extends Controller
         $retur = DB::table('retur as r')
             ->leftJoin('transaksi as t', 't.id', '=', 'r.transaksi_id')
             ->leftJoin('produks as p', 'p.id', '=', 'r.produk_id')
+            ->leftJoin('produks as p2', 'p2.nama', '=', 'r.produk_nama')
             ->leftJoin('detail_transaksi as dt', function ($join) {
                 $join->on('dt.transaksi_id', '=', 'r.transaksi_id')
                      ->on('dt.produk_id', '=', 'r.produk_id');
@@ -262,8 +271,8 @@ class ReportLaporanController extends Controller
                 'r.status',
                 'r.foto',
                 'u.name as kasir_nama',
-                DB::raw('COALESCE(dt.harga, p.harga_jual, 0) as harga'),
-                DB::raw('(r.qty * COALESCE(dt.harga, p.harga_jual, 0)) as total')
+                DB::raw('COALESCE(dt.harga, p.harga_jual, p2.harga_jual, 0) as harga'),
+                DB::raw('(r.qty * COALESCE(dt.harga, p.harga_jual, p2.harga_jual, 0)) as total')
             ])
             ->where('r.id', $id)
             ->first();
@@ -426,6 +435,7 @@ class ReportLaporanController extends Controller
         $query = DB::table('retur as r')
             ->leftJoin('transaksi as t', 't.id', '=', 'r.transaksi_id')
             ->leftJoin('produks as p', 'p.id', '=', 'r.produk_id')
+            ->leftJoin('produks as p2', 'p2.nama', '=', 'r.produk_nama')
             ->leftJoin('detail_transaksi as dt', function ($join) {
                 $join->on('dt.transaksi_id', '=', 'r.transaksi_id')
                      ->on('dt.produk_id', '=', 'r.produk_id');
@@ -544,8 +554,8 @@ class ReportLaporanController extends Controller
                 'r.alasan',
                 'r.status',
                 'u.name as kasir_nama',
-                DB::raw('COALESCE(dt.harga, p.harga_jual, 0) as harga'),
-                DB::raw('(r.qty * COALESCE(dt.harga, p.harga_jual, 0)) as total')
+                DB::raw('COALESCE(dt.harga, p.harga_jual, p2.harga_jual, 0) as harga'),
+                DB::raw('(r.qty * COALESCE(dt.harga, p.harga_jual, p2.harga_jual, 0)) as total')
             ])
             ->orderByDesc('r.tanggal_retur')
             ->orderByDesc('r.id')
