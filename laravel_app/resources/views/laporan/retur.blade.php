@@ -1051,6 +1051,7 @@
 
         async function startKamera(mode) {
             const prefix = mode === 'tambah' ? '' : 'edit-';
+            const fileInput = document.getElementById(prefix + 'foto');
             const video = document.getElementById(prefix + 'kamera-video');
             const imgPreview = document.getElementById(prefix + 'kamera-preview-img');
             const btnStart = document.getElementById(prefix + 'btn-start-kamera');
@@ -1060,6 +1061,13 @@
             const statusText = document.getElementById(prefix + 'kamera-status-text');
 
             stopKamera(mode);
+
+            // Cek jika diakses via HTTP biasa bukan HTTPS, atau browser memblokir WebRTC stream
+            if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                statusText.innerHTML = '<span class="text-primary fw-semibold">💡 Kamera live butuh koneksi HTTPS. Mengakses kamera/file perangkat...</span>';
+                if (fileInput) fileInput.click();
+                return;
+            }
 
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({
@@ -1080,8 +1088,9 @@
                 statusText.textContent = 'Kamera aktif. Posisikan barang bukti retur, lalu klik "Tangkap Foto".';
             } catch (err) {
                 console.error('Kamera error:', err);
-                alert('Tidak dapat mengakses kamera perangkat. Pastikan izin kamera diberikan atau gunakan opsi Upload File.');
-                statusText.textContent = 'Gagal mengakses kamera. Silakan gunakan opsi Upload File.';
+                // Jika gagal (misal izin ditolak atau diproses di HTTP), langsung alihkan ke file input tanpa alert mengganggu
+                statusText.innerHTML = '<span class="text-secondary small">Membuka kamera / opsi upload perangkat...</span>';
+                if (fileInput) fileInput.click();
             }
         }
 
