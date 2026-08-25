@@ -211,29 +211,38 @@
 
                             <!-- Mode Ambil Kamera -->
                             <div id="tambah-foto-kamera-box" class="d-none text-center bg-light p-3 rounded border">
-                                <video id="kamera-video" autoplay playsinline style="max-height: 220px; width: 100%; object-fit: contain;" class="rounded bg-black mb-2 d-none"></video>
+                                <video id="kamera-video" autoplay playsinline style="max-height: 250px; width: 100%; object-fit: contain;" class="rounded bg-black mb-2 d-none"></video>
                                 <canvas id="kamera-canvas" class="d-none"></canvas>
                                 <img id="kamera-preview-img" class="img-thumbnail mb-2 d-none" style="max-height: 200px; object-fit: contain;">
                                 
                                 <div id="kamera-actions" class="d-flex flex-wrap justify-content-center gap-2 mb-2">
-                                    <!-- Tombol Langsung Kamera (Terbuka Nativ di HP/PC tanpa Isu Keamanan) -->
-                                    <label for="foto_kamera_tambah" id="label-kamera-tambah" class="btn btn-primary shadow-sm mb-0 px-3 py-2">
-                                        📷 Buka Kamera Perangkat
+                                    <!-- Tombol Tangkap Foto dari Stream -->
+                                    <button type="button" id="btn-capture-kamera" class="btn btn-success shadow-sm px-4 py-2 fw-semibold d-none" onclick="captureKamera('tambah')">
+                                        📸 Tangkap Foto dari Kamera
+                                    </button>
+
+                                    <!-- Tombol Mulai Stream -->
+                                    <button type="button" id="btn-start-kamera" class="btn btn-primary shadow-sm px-3 py-2" onclick="startKamera('tambah')">
+                                        🎥 Buka Kamera WebCam
+                                    </button>
+
+                                    <!-- Tombol Langsung Perangkat -->
+                                    <label for="foto_kamera_tambah" id="label-kamera-tambah" class="btn btn-outline-primary shadow-sm mb-0 px-3 py-2">
+                                        📷 Kamera Perangkat HP/PC
                                         <input id="foto_kamera_tambah" type="file" accept="image/*" capture="environment" class="d-none" onchange="handleDirectKameraChange(this, 'tambah')">
                                     </label>
 
-                                    <!-- Tombol WebRTC Stream (Opsional) -->
-                                    <button type="button" id="btn-start-kamera" class="btn btn-outline-secondary shadow-sm mb-0 px-3 py-2" onclick="startKamera('tambah')">
-                                        🎥 Live Stream WebCam
+                                    <!-- Tombol Ambil Ulang -->
+                                    <button type="button" id="btn-retake-kamera" class="btn btn-outline-secondary shadow-sm d-none px-3 py-2" onclick="startKamera('tambah')">
+                                        🔄 Ambil Foto Ulang
                                     </button>
-                                    <button type="button" id="btn-capture-kamera" class="btn btn-success shadow-sm d-none mb-0 px-3 py-2" onclick="captureKamera('tambah')">
-                                        📸 Tangkap Foto Live
-                                    </button>
-                                    <button type="button" id="btn-stop-kamera" class="btn btn-outline-danger shadow-sm d-none mb-0 px-3 py-2" onclick="stopKamera('tambah')">
-                                        Tutup Stream
+
+                                    <!-- Tombol Stop Stream -->
+                                    <button type="button" id="btn-stop-kamera" class="btn btn-outline-danger shadow-sm d-none px-3 py-2" onclick="stopKamera('tambah')">
+                                        ⏹️ Tutup Stream
                                     </button>
                                 </div>
-                                <span id="kamera-status-text" class="small text-muted d-block mt-1">Klik <b>'Buka Kamera Perangkat'</b> untuk mengambil foto langsung dari HP/Laptop.</span>
+                                <span id="kamera-status-text" class="small text-muted d-block mt-1">Klik <b>'Buka Kamera WebCam'</b> atau <b>'Kamera Perangkat'</b> untuk mengambil foto bukti.</span>
                             </div>
                         </div>
                     </div>
@@ -310,29 +319,38 @@
 
                             <!-- Mode Ambil Kamera -->
                             <div id="edit-foto-kamera-box" class="d-none text-center bg-light p-3 rounded border">
-                                <video id="edit-kamera-video" autoplay playsinline style="max-height: 220px; width: 100%; object-fit: contain;" class="rounded bg-black mb-2 d-none"></video>
+                                <video id="edit-kamera-video" autoplay playsinline style="max-height: 250px; width: 100%; object-fit: contain;" class="rounded bg-black mb-2 d-none"></video>
                                 <canvas id="edit-kamera-canvas" class="d-none"></canvas>
                                 <img id="edit-kamera-preview-img" class="img-thumbnail mb-2 d-none" style="max-height: 200px; object-fit: contain;">
                                 
                                 <div id="edit-kamera-actions" class="d-flex flex-wrap justify-content-center gap-2 mb-2">
-                                    <!-- Tombol Langsung Kamera (Terbuka Nativ di HP/PC tanpa Isu Keamanan) -->
-                                    <label for="foto_kamera_edit" id="edit-label-kamera" class="btn btn-primary shadow-sm mb-0 px-3 py-2">
-                                        📷 Buka Kamera Perangkat
+                                    <!-- Tombol Tangkap Foto dari Stream -->
+                                    <button type="button" id="edit-btn-capture-kamera" class="btn btn-success shadow-sm px-4 py-2 fw-semibold d-none" onclick="captureKamera('edit')">
+                                        📸 Tangkap Foto dari Kamera
+                                    </button>
+
+                                    <!-- Tombol Mulai Stream -->
+                                    <button type="button" id="edit-btn-start-kamera" class="btn btn-primary shadow-sm px-3 py-2" onclick="startKamera('edit')">
+                                        🎥 Buka Kamera WebCam
+                                    </button>
+
+                                    <!-- Tombol Langsung Perangkat -->
+                                    <label for="foto_kamera_edit" id="edit-label-kamera" class="btn btn-outline-primary shadow-sm mb-0 px-3 py-2">
+                                        📷 Kamera Perangkat HP/PC
                                         <input id="foto_kamera_edit" type="file" accept="image/*" capture="environment" class="d-none" onchange="handleDirectKameraChange(this, 'edit')">
                                     </label>
 
-                                    <!-- Tombol WebRTC Stream (Opsional) -->
-                                    <button type="button" id="edit-btn-start-kamera" class="btn btn-outline-secondary shadow-sm mb-0 px-3 py-2" onclick="startKamera('edit')">
-                                        🎥 Live Stream WebCam
+                                    <!-- Tombol Ambil Ulang -->
+                                    <button type="button" id="edit-btn-retake-kamera" class="btn btn-outline-secondary shadow-sm d-none px-3 py-2" onclick="startKamera('edit')">
+                                        🔄 Ambil Foto Ulang
                                     </button>
-                                    <button type="button" id="edit-btn-capture-kamera" class="btn btn-success shadow-sm d-none mb-0 px-3 py-2" onclick="captureKamera('edit')">
-                                        📸 Tangkap Foto Live
-                                    </button>
-                                    <button type="button" id="edit-btn-stop-kamera" class="btn btn-outline-danger shadow-sm d-none mb-0 px-3 py-2" onclick="stopKamera('edit')">
-                                        Tutup Stream
+
+                                    <!-- Tombol Stop Stream -->
+                                    <button type="button" id="edit-btn-stop-kamera" class="btn btn-outline-danger shadow-sm d-none px-3 py-2" onclick="stopKamera('edit')">
+                                        ⏹️ Tutup Stream
                                     </button>
                                 </div>
-                                <span id="edit-kamera-status-text" class="small text-muted d-block mt-1">Klik <b>'Buka Kamera Perangkat'</b> untuk mengambil foto pengganti dari HP/Laptop.</span>
+                                <span id="edit-kamera-status-text" class="small text-muted d-block mt-1">Klik <b>'Buka Kamera WebCam'</b> atau <b>'Kamera Perangkat'</b> untuk mengambil foto bukti.</span>
                             </div>
                         </div>
                     </div>
@@ -1071,12 +1089,12 @@
                 uploadBtn.classList.remove('active');
                 kameraBox.classList.remove('d-none');
                 uploadBox.classList.add('d-none');
+                startKamera(mode);
             }
         }
 
         async function startKamera(mode) {
             const prefix = mode === 'tambah' ? '' : 'edit-';
-            const fileInput = document.getElementById(prefix + 'foto');
             const video = document.getElementById(prefix + 'kamera-video');
             const imgPreview = document.getElementById(prefix + 'kamera-preview-img');
             const btnStart = document.getElementById(prefix + 'btn-start-kamera');
@@ -1089,8 +1107,9 @@
 
             // Cek jika diakses via HTTP biasa bukan HTTPS, atau browser memblokir WebRTC stream
             if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                statusText.innerHTML = '<span class="text-primary fw-semibold">💡 Kamera live butuh koneksi HTTPS. Mengakses kamera/file perangkat...</span>';
-                if (fileInput) fileInput.click();
+                statusText.innerHTML = '<span class="text-primary fw-semibold">💡 Kamera live WebCam membutuhkan koneksi HTTPS. Silakan klik "📷 Kamera Perangkat HP/PC".</span>';
+                if (btnStart) btnStart.classList.remove('d-none');
+                if (btnCapture) btnCapture.classList.add('d-none');
                 return;
             }
 
@@ -1106,16 +1125,17 @@
                 video.classList.remove('d-none');
                 imgPreview.classList.add('d-none');
                 
-                btnStart.classList.add('d-none');
-                btnRetake.classList.add('d-none');
-                btnCapture.classList.remove('d-none');
-                btnStop.classList.remove('d-none');
-                statusText.textContent = 'Kamera aktif. Posisikan barang bukti retur, lalu klik "Tangkap Foto".';
+                if (btnStart) btnStart.classList.add('d-none');
+                if (btnRetake) btnRetake.classList.add('d-none');
+                if (btnCapture) btnCapture.classList.remove('d-none');
+                if (btnStop) btnStop.classList.remove('d-none');
+                statusText.innerHTML = '<span class="text-success fw-bold">🎥 Kamera Aktif! Posisikan barang bukti, lalu klik "📸 Tangkap Foto dari Kamera".</span>';
             } catch (err) {
                 console.error('Kamera error:', err);
-                // Jika gagal (misal izin ditolak atau diproses di HTTP), langsung alihkan ke file input tanpa alert mengganggu
-                statusText.innerHTML = '<span class="text-secondary small">Membuka kamera / opsi upload perangkat...</span>';
-                if (fileInput) fileInput.click();
+                statusText.innerHTML = '<span class="text-secondary small">Gagal membuka live webcam. Silakan gunakan tombol <b>"📷 Kamera Perangkat HP/PC"</b>.</span>';
+                if (btnStart) btnStart.classList.remove('d-none');
+                if (btnCapture) btnCapture.classList.add('d-none');
+                if (btnStop) btnStop.classList.add('d-none');
             }
         }
 
@@ -1124,12 +1144,13 @@
             const video = document.getElementById(prefix + 'kamera-video');
             const canvas = document.getElementById(prefix + 'kamera-canvas');
             const imgPreview = document.getElementById(prefix + 'kamera-preview-img');
+            const btnStart = document.getElementById(prefix + 'btn-start-kamera');
             const btnCapture = document.getElementById(prefix + 'btn-capture-kamera');
             const btnRetake = document.getElementById(prefix + 'btn-retake-kamera');
             const btnStop = document.getElementById(prefix + 'btn-stop-kamera');
             const statusText = document.getElementById(prefix + 'kamera-status-text');
 
-            if (!video.srcObject) return;
+            if (!video || !video.srcObject) return;
 
             canvas.width = video.videoWidth || 640;
             canvas.height = video.videoHeight || 480;
@@ -1145,12 +1166,19 @@
                 imgPreview.classList.remove('d-none');
                 video.classList.add('d-none');
 
-                stopKamera(mode);
+                // Stop active video stream
+                const stream = mode === 'tambah' ? activeStreamTambah : activeStreamEdit;
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    if (mode === 'tambah') activeStreamTambah = null;
+                    else activeStreamEdit = null;
+                }
 
-                btnCapture.classList.add('d-none');
-                btnStop.classList.add('d-none');
-                btnRetake.classList.remove('d-none');
-                statusText.textContent = '✓ Foto barang bukti berhasil ditangkap!';
+                if (btnStart) btnStart.classList.add('d-none');
+                if (btnCapture) btnCapture.classList.add('d-none');
+                if (btnStop) btnStop.classList.add('d-none');
+                if (btnRetake) btnRetake.classList.remove('d-none');
+                statusText.innerHTML = '<span class="text-success fw-bold">✓ Foto barang bukti berhasil ditangkap! Siap disimpan.</span>';
             }, 'image/jpeg', 0.85);
         }
 
