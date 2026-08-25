@@ -31,6 +31,7 @@
                         <th class="text-end" style="width: 120px;">Minimum</th>
                         <th class="text-end" style="width: 120px;">Selisih</th>
                         <th class="ps-3">Supplier Terakhir</th>
+                        <th class="text-center pe-3" style="width: 120px;">Aksi</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -49,10 +50,15 @@
                             <td class="text-end text-muted">{{ (int) $p->stok_minimum }}</td>
                             <td class="text-end fw-bold text-danger">{{ $selisih }}</td>
                             <td class="ps-3 text-secondary">{{ $p->supplierTerakhir() ?? '—' }}</td>
+                            <td class="text-center pe-3">
+                                <a href="{{ route('pembelian.create', ['produk_id' => $p->id]) }}" class="btn btn-sm btn-success fw-semibold d-inline-flex align-items-center gap-1 shadow-sm">
+                                    <i class="bi bi-cart-plus-fill"></i> Beli
+                                </a>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center py-4 text-muted">Semua produk saat ini dalam kondisi aman (stok di atas minimum).</td>
+                            <td colspan="8" class="text-center py-4 text-muted">Semua produk saat ini dalam kondisi aman (stok di atas minimum).</td>
                         </tr>
                     @endforelse
                     </tbody>
