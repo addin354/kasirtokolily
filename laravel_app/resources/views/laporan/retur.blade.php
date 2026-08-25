@@ -190,8 +190,47 @@
                             <input id="tanggal_retur" name="tanggal_retur" type="date" class="form-control" value="{{ date('Y-m-d') }}">
                         </div>
                         <div class="mb-3">
-                            <label for="foto" class="form-label small fw-semibold">Foto Barang Bukti (Opsional)</label>
-                            <input id="foto" name="foto" type="file" class="form-control" accept="image/*">
+                            <label class="form-label small fw-semibold">Foto Barang Bukti (Opsional)</label>
+                            
+                            <ul class="nav nav-pills nav-fill mb-2 small" id="tambah-foto-tab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active py-1" id="tab-upload-btn" type="button" onclick="switchFotoTab('tambah', 'upload')">📁 Upload File</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link py-1" id="tab-kamera-btn" type="button" onclick="switchFotoTab('tambah', 'kamera')">📷 Ambil Kamera</button>
+                                </li>
+                            </ul>
+
+                            <!-- Mode Upload File -->
+                            <div id="tambah-foto-upload-box">
+                                <input id="foto" name="foto" type="file" class="form-control form-control-sm" accept="image/*" capture="environment">
+                                <div id="foto-file-preview" class="mt-2 d-none">
+                                    <img id="foto-file-img" src="" class="img-thumbnail" style="max-height: 150px;">
+                                </div>
+                            </div>
+
+                            <!-- Mode Ambil Kamera -->
+                            <div id="tambah-foto-kamera-box" class="d-none text-center bg-light p-2 rounded border">
+                                <video id="kamera-video" autoplay playsinline style="max-height: 220px; width: 100%; object-fit: contain;" class="rounded bg-black mb-2 d-none"></video>
+                                <canvas id="kamera-canvas" class="d-none"></canvas>
+                                <img id="kamera-preview-img" class="img-thumbnail mb-2 d-none" style="max-height: 200px; object-fit: contain;">
+                                
+                                <div id="kamera-actions" class="d-flex justify-content-center gap-2">
+                                    <button type="button" id="btn-start-kamera" class="btn btn-sm btn-outline-primary shadow-sm" onclick="startKamera('tambah')">
+                                        📷 Buka Kamera
+                                    </button>
+                                    <button type="button" id="btn-capture-kamera" class="btn btn-sm btn-success shadow-sm d-none" onclick="captureKamera('tambah')">
+                                        📸 Tangkap Foto
+                                    </button>
+                                    <button type="button" id="btn-retake-kamera" class="btn btn-sm btn-outline-secondary shadow-sm d-none" onclick="startKamera('tambah')">
+                                        🔄 Ambil Ulang
+                                    </button>
+                                    <button type="button" id="btn-stop-kamera" class="btn btn-sm btn-outline-danger shadow-sm d-none" onclick="stopKamera('tambah')">
+                                        Tutup Kamera
+                                    </button>
+                                </div>
+                                <span id="kamera-status-text" class="small text-muted d-block mt-1">Klik 'Buka Kamera' untuk mengambil foto langsung dari perangkat.</span>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -245,11 +284,47 @@
                             <input id="edit_tanggal_retur" name="tanggal_retur" type="date" class="form-control">
                         </div>
                         <div class="mb-3">
-                            <label for="edit_foto" class="form-label small fw-semibold">Foto Barang Bukti (Opsional)</label>
-                            <input id="edit_foto" name="foto" type="file" class="form-control" accept="image/*">
-                            <div id="edit-foto-preview" class="mt-2 d-none">
-                                <span class="small text-muted d-block mb-1">Foto Saat Ini:</span>
-                                <img id="edit-foto-img" src="" alt="Preview" class="img-thumbnail" style="max-height: 100px;">
+                            <label class="form-label small fw-semibold">Foto Barang Bukti (Opsional)</label>
+                            
+                            <ul class="nav nav-pills nav-fill mb-2 small" id="edit-foto-tab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active py-1" id="edit-tab-upload-btn" type="button" onclick="switchFotoTab('edit', 'upload')">📁 Upload File</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link py-1" id="edit-tab-kamera-btn" type="button" onclick="switchFotoTab('edit', 'kamera')">📷 Ambil Kamera</button>
+                                </li>
+                            </ul>
+
+                            <!-- Mode Upload File -->
+                            <div id="edit-foto-upload-box">
+                                <input id="edit_foto" name="foto" type="file" class="form-control form-control-sm" accept="image/*" capture="environment">
+                                <div id="edit-foto-preview" class="mt-2 d-none">
+                                    <span class="small text-muted d-block mb-1">Foto saat ini / terpilih:</span>
+                                    <img id="edit-foto-img" src="" alt="Preview" class="img-thumbnail" style="max-height: 150px;">
+                                </div>
+                            </div>
+
+                            <!-- Mode Ambil Kamera -->
+                            <div id="edit-foto-kamera-box" class="d-none text-center bg-light p-2 rounded border">
+                                <video id="edit-kamera-video" autoplay playsinline style="max-height: 220px; width: 100%; object-fit: contain;" class="rounded bg-black mb-2 d-none"></video>
+                                <canvas id="edit-kamera-canvas" class="d-none"></canvas>
+                                <img id="edit-kamera-preview-img" class="img-thumbnail mb-2 d-none" style="max-height: 200px; object-fit: contain;">
+                                
+                                <div id="edit-kamera-actions" class="d-flex justify-content-center gap-2">
+                                    <button type="button" id="edit-btn-start-kamera" class="btn btn-sm btn-outline-primary shadow-sm" onclick="startKamera('edit')">
+                                        📷 Buka Kamera
+                                    </button>
+                                    <button type="button" id="edit-btn-capture-kamera" class="btn btn-sm btn-success shadow-sm d-none" onclick="captureKamera('edit')">
+                                        📸 Tangkap Foto
+                                    </button>
+                                    <button type="button" id="edit-btn-retake-kamera" class="btn btn-sm btn-outline-secondary shadow-sm d-none" onclick="startKamera('edit')">
+                                        🔄 Ambil Ulang
+                                    </button>
+                                    <button type="button" id="edit-btn-stop-kamera" class="btn btn-sm btn-outline-danger shadow-sm d-none" onclick="stopKamera('edit')">
+                                        Tutup Kamera
+                                    </button>
+                                </div>
+                                <span id="edit-kamera-status-text" class="small text-muted d-block mt-1">Klik 'Buka Kamera' untuk mengambil foto pengganti dari perangkat.</span>
                             </div>
                         </div>
                     </div>
@@ -948,10 +1023,162 @@
             loadReturData();
         });
 
+        // Kamera Capture Helpers
+        let activeStreamTambah = null;
+        let activeStreamEdit = null;
+        let cameraBlobTambah = null;
+        let cameraBlobEdit = null;
+
+        function switchFotoTab(mode, tab) {
+            const uploadBtn = document.getElementById(mode === 'tambah' ? 'tab-upload-btn' : 'edit-tab-upload-btn');
+            const kameraBtn = document.getElementById(mode === 'tambah' ? 'tab-kamera-btn' : 'edit-tab-kamera-btn');
+            const uploadBox = document.getElementById(mode === 'tambah' ? 'tambah-foto-upload-box' : 'edit-foto-upload-box');
+            const kameraBox = document.getElementById(mode === 'tambah' ? 'tambah-foto-kamera-box' : 'edit-foto-kamera-box');
+
+            if (tab === 'upload') {
+                uploadBtn.classList.add('active');
+                kameraBtn.classList.remove('active');
+                uploadBox.classList.remove('d-none');
+                kameraBox.classList.add('d-none');
+                stopKamera(mode);
+            } else {
+                kameraBtn.classList.add('active');
+                uploadBtn.classList.remove('active');
+                kameraBox.classList.remove('d-none');
+                uploadBox.classList.add('d-none');
+            }
+        }
+
+        async function startKamera(mode) {
+            const prefix = mode === 'tambah' ? '' : 'edit-';
+            const video = document.getElementById(prefix + 'kamera-video');
+            const imgPreview = document.getElementById(prefix + 'kamera-preview-img');
+            const btnStart = document.getElementById(prefix + 'btn-start-kamera');
+            const btnCapture = document.getElementById(prefix + 'btn-capture-kamera');
+            const btnRetake = document.getElementById(prefix + 'btn-retake-kamera');
+            const btnStop = document.getElementById(prefix + 'btn-stop-kamera');
+            const statusText = document.getElementById(prefix + 'kamera-status-text');
+
+            stopKamera(mode);
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: { ideal: 'environment' } }
+                });
+                
+                if (mode === 'tambah') activeStreamTambah = stream;
+                else activeStreamEdit = stream;
+
+                video.srcObject = stream;
+                video.classList.remove('d-none');
+                imgPreview.classList.add('d-none');
+                
+                btnStart.classList.add('d-none');
+                btnRetake.classList.add('d-none');
+                btnCapture.classList.remove('d-none');
+                btnStop.classList.remove('d-none');
+                statusText.textContent = 'Kamera aktif. Posisikan barang bukti retur, lalu klik "Tangkap Foto".';
+            } catch (err) {
+                console.error('Kamera error:', err);
+                alert('Tidak dapat mengakses kamera perangkat. Pastikan izin kamera diberikan atau gunakan opsi Upload File.');
+                statusText.textContent = 'Gagal mengakses kamera. Silakan gunakan opsi Upload File.';
+            }
+        }
+
+        function captureKamera(mode) {
+            const prefix = mode === 'tambah' ? '' : 'edit-';
+            const video = document.getElementById(prefix + 'kamera-video');
+            const canvas = document.getElementById(prefix + 'kamera-canvas');
+            const imgPreview = document.getElementById(prefix + 'kamera-preview-img');
+            const btnCapture = document.getElementById(prefix + 'btn-capture-kamera');
+            const btnRetake = document.getElementById(prefix + 'btn-retake-kamera');
+            const btnStop = document.getElementById(prefix + 'btn-stop-kamera');
+            const statusText = document.getElementById(prefix + 'kamera-status-text');
+
+            if (!video.srcObject) return;
+
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            canvas.toBlob(function(blob) {
+                if (mode === 'tambah') cameraBlobTambah = blob;
+                else cameraBlobEdit = blob;
+
+                const url = URL.createObjectURL(blob);
+                imgPreview.src = url;
+                imgPreview.classList.remove('d-none');
+                video.classList.add('d-none');
+
+                stopKamera(mode);
+
+                btnCapture.classList.add('d-none');
+                btnStop.classList.add('d-none');
+                btnRetake.classList.remove('d-none');
+                statusText.textContent = '✓ Foto barang bukti berhasil ditangkap!';
+            }, 'image/jpeg', 0.85);
+        }
+
+        function stopKamera(mode) {
+            const prefix = mode === 'tambah' ? '' : 'edit-';
+            const stream = mode === 'tambah' ? activeStreamTambah : activeStreamEdit;
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                if (mode === 'tambah') activeStreamTambah = null;
+                else activeStreamEdit = null;
+            }
+
+            const video = document.getElementById(prefix + 'kamera-video');
+            if (video) {
+                video.srcObject = null;
+                video.classList.add('d-none');
+            }
+
+            const btnStart = document.getElementById(prefix + 'btn-start-kamera');
+            const btnCapture = document.getElementById(prefix + 'btn-capture-kamera');
+            const btnStop = document.getElementById(prefix + 'btn-stop-kamera');
+
+            if (btnStart && btnCapture && btnStop) {
+                const imgPreview = document.getElementById(prefix + 'kamera-preview-img');
+                if (!imgPreview || imgPreview.classList.contains('d-none')) {
+                    btnStart.classList.remove('d-none');
+                }
+                btnCapture.classList.add('d-none');
+                btnStop.classList.add('d-none');
+            }
+        }
+
+        window.switchFotoTab = switchFotoTab;
+        window.startKamera = startKamera;
+        window.captureKamera = captureKamera;
+        window.stopKamera = stopKamera;
+
+        const modalTambah = document.getElementById('tambahReturModal');
+        if (modalTambah) {
+            modalTambah.addEventListener('hidden.bs.modal', function() {
+                stopKamera('tambah');
+                cameraBlobTambah = null;
+                switchFotoTab('tambah', 'upload');
+            });
+        }
+
+        const modalEdit = document.getElementById('editReturModal');
+        if (modalEdit) {
+            modalEdit.addEventListener('hidden.bs.modal', function() {
+                stopKamera('edit');
+                cameraBlobEdit = null;
+                switchFotoTab('edit', 'upload');
+            });
+        }
+
         // Tambah Retur Form submit listener
         returForm.addEventListener('submit', async function (event) {
             event.preventDefault();
             const formData = new FormData(returForm);
+            if (cameraBlobTambah) {
+                formData.set('foto', cameraBlobTambah, 'foto_retur_kamera.jpg');
+            }
 
             try {
                 const response = await fetch(returEndpoint, {
@@ -972,6 +1199,7 @@
 
                 showAlert(result.message || 'Produk retur berhasil ditambahkan.', 'success');
                 returForm.reset();
+                cameraBlobTambah = null;
                 document.getElementById('tanggal_retur').value = '{{ date('Y-m-d') }}';
                 bootstrap.Modal.getOrCreateInstance(document.getElementById('tambahReturModal')).hide();
                 loadReturData();
@@ -988,6 +1216,9 @@
             const formData = new FormData(editReturForm);
             formData.delete('id');
             formData.append('_method', 'PUT');
+            if (cameraBlobEdit) {
+                formData.set('foto', cameraBlobEdit, 'foto_retur_kamera.jpg');
+            }
 
             try {
                 const response = await fetch(`${returEndpoint}/${id}`, {
@@ -1007,6 +1238,7 @@
                 }
 
                 showAlert(result.message || 'Produk retur berhasil diperbarui.', 'success');
+                cameraBlobEdit = null;
                 bootstrap.Modal.getOrCreateInstance(document.getElementById('editReturModal')).hide();
                 loadReturData();
             } catch (error) {
