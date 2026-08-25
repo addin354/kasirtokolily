@@ -203,33 +203,37 @@
 
                             <!-- Mode Upload File -->
                             <div id="tambah-foto-upload-box">
-                                <input id="foto" name="foto" type="file" class="form-control form-control-sm" accept="image/*" capture="environment">
+                                <input id="foto" name="foto" type="file" class="form-control form-control-sm" accept="image/*">
                                 <div id="foto-file-preview" class="mt-2 d-none">
                                     <img id="foto-file-img" src="" class="img-thumbnail" style="max-height: 150px;">
                                 </div>
                             </div>
 
                             <!-- Mode Ambil Kamera -->
-                            <div id="tambah-foto-kamera-box" class="d-none text-center bg-light p-2 rounded border">
+                            <div id="tambah-foto-kamera-box" class="d-none text-center bg-light p-3 rounded border">
                                 <video id="kamera-video" autoplay playsinline style="max-height: 220px; width: 100%; object-fit: contain;" class="rounded bg-black mb-2 d-none"></video>
                                 <canvas id="kamera-canvas" class="d-none"></canvas>
                                 <img id="kamera-preview-img" class="img-thumbnail mb-2 d-none" style="max-height: 200px; object-fit: contain;">
                                 
-                                <div id="kamera-actions" class="d-flex justify-content-center gap-2">
-                                    <button type="button" id="btn-start-kamera" class="btn btn-sm btn-outline-primary shadow-sm" onclick="startKamera('tambah')">
-                                        📷 Buka Kamera
+                                <div id="kamera-actions" class="d-flex flex-wrap justify-content-center gap-2 mb-2">
+                                    <!-- Tombol Langsung Kamera (Terbuka Nativ di HP/PC tanpa Isu Keamanan) -->
+                                    <label for="foto_kamera_tambah" id="label-kamera-tambah" class="btn btn-primary shadow-sm mb-0 px-3 py-2">
+                                        📷 Buka Kamera Perangkat
+                                        <input id="foto_kamera_tambah" type="file" accept="image/*" capture="environment" class="d-none" onchange="handleDirectKameraChange(this, 'tambah')">
+                                    </label>
+
+                                    <!-- Tombol WebRTC Stream (Opsional) -->
+                                    <button type="button" id="btn-start-kamera" class="btn btn-outline-secondary shadow-sm mb-0 px-3 py-2" onclick="startKamera('tambah')">
+                                        🎥 Live Stream WebCam
                                     </button>
-                                    <button type="button" id="btn-capture-kamera" class="btn btn-sm btn-success shadow-sm d-none" onclick="captureKamera('tambah')">
-                                        📸 Tangkap Foto
+                                    <button type="button" id="btn-capture-kamera" class="btn btn-success shadow-sm d-none mb-0 px-3 py-2" onclick="captureKamera('tambah')">
+                                        📸 Tangkap Foto Live
                                     </button>
-                                    <button type="button" id="btn-retake-kamera" class="btn btn-sm btn-outline-secondary shadow-sm d-none" onclick="startKamera('tambah')">
-                                        🔄 Ambil Ulang
-                                    </button>
-                                    <button type="button" id="btn-stop-kamera" class="btn btn-sm btn-outline-danger shadow-sm d-none" onclick="stopKamera('tambah')">
-                                        Tutup Kamera
+                                    <button type="button" id="btn-stop-kamera" class="btn btn-outline-danger shadow-sm d-none mb-0 px-3 py-2" onclick="stopKamera('tambah')">
+                                        Tutup Stream
                                     </button>
                                 </div>
-                                <span id="kamera-status-text" class="small text-muted d-block mt-1">Klik 'Buka Kamera' untuk mengambil foto langsung dari perangkat.</span>
+                                <span id="kamera-status-text" class="small text-muted d-block mt-1">Klik <b>'Buka Kamera Perangkat'</b> untuk mengambil foto langsung dari HP/Laptop.</span>
                             </div>
                         </div>
                     </div>
@@ -297,7 +301,7 @@
 
                             <!-- Mode Upload File -->
                             <div id="edit-foto-upload-box">
-                                <input id="edit_foto" name="foto" type="file" class="form-control form-control-sm" accept="image/*" capture="environment">
+                                <input id="edit_foto" name="foto" type="file" class="form-control form-control-sm" accept="image/*">
                                 <div id="edit-foto-preview" class="mt-2 d-none">
                                     <span class="small text-muted d-block mb-1">Foto saat ini / terpilih:</span>
                                     <img id="edit-foto-img" src="" alt="Preview" class="img-thumbnail" style="max-height: 150px;">
@@ -305,26 +309,30 @@
                             </div>
 
                             <!-- Mode Ambil Kamera -->
-                            <div id="edit-foto-kamera-box" class="d-none text-center bg-light p-2 rounded border">
+                            <div id="edit-foto-kamera-box" class="d-none text-center bg-light p-3 rounded border">
                                 <video id="edit-kamera-video" autoplay playsinline style="max-height: 220px; width: 100%; object-fit: contain;" class="rounded bg-black mb-2 d-none"></video>
                                 <canvas id="edit-kamera-canvas" class="d-none"></canvas>
                                 <img id="edit-kamera-preview-img" class="img-thumbnail mb-2 d-none" style="max-height: 200px; object-fit: contain;">
                                 
-                                <div id="edit-kamera-actions" class="d-flex justify-content-center gap-2">
-                                    <button type="button" id="edit-btn-start-kamera" class="btn btn-sm btn-outline-primary shadow-sm" onclick="startKamera('edit')">
-                                        📷 Buka Kamera
+                                <div id="edit-kamera-actions" class="d-flex flex-wrap justify-content-center gap-2 mb-2">
+                                    <!-- Tombol Langsung Kamera (Terbuka Nativ di HP/PC tanpa Isu Keamanan) -->
+                                    <label for="foto_kamera_edit" id="edit-label-kamera" class="btn btn-primary shadow-sm mb-0 px-3 py-2">
+                                        📷 Buka Kamera Perangkat
+                                        <input id="foto_kamera_edit" type="file" accept="image/*" capture="environment" class="d-none" onchange="handleDirectKameraChange(this, 'edit')">
+                                    </label>
+
+                                    <!-- Tombol WebRTC Stream (Opsional) -->
+                                    <button type="button" id="edit-btn-start-kamera" class="btn btn-outline-secondary shadow-sm mb-0 px-3 py-2" onclick="startKamera('edit')">
+                                        🎥 Live Stream WebCam
                                     </button>
-                                    <button type="button" id="edit-btn-capture-kamera" class="btn btn-sm btn-success shadow-sm d-none" onclick="captureKamera('edit')">
-                                        📸 Tangkap Foto
+                                    <button type="button" id="edit-btn-capture-kamera" class="btn btn-success shadow-sm d-none mb-0 px-3 py-2" onclick="captureKamera('edit')">
+                                        📸 Tangkap Foto Live
                                     </button>
-                                    <button type="button" id="edit-btn-retake-kamera" class="btn btn-sm btn-outline-secondary shadow-sm d-none" onclick="startKamera('edit')">
-                                        🔄 Ambil Ulang
-                                    </button>
-                                    <button type="button" id="edit-btn-stop-kamera" class="btn btn-sm btn-outline-danger shadow-sm d-none" onclick="stopKamera('edit')">
-                                        Tutup Kamera
+                                    <button type="button" id="edit-btn-stop-kamera" class="btn btn-outline-danger shadow-sm d-none mb-0 px-3 py-2" onclick="stopKamera('edit')">
+                                        Tutup Stream
                                     </button>
                                 </div>
-                                <span id="edit-kamera-status-text" class="small text-muted d-block mt-1">Klik 'Buka Kamera' untuk mengambil foto pengganti dari perangkat.</span>
+                                <span id="edit-kamera-status-text" class="small text-muted d-block mt-1">Klik <b>'Buka Kamera Perangkat'</b> untuk mengambil foto pengganti dari HP/Laptop.</span>
                             </div>
                         </div>
                     </div>
@@ -1028,6 +1036,23 @@
         let activeStreamEdit = null;
         let cameraBlobTambah = null;
         let cameraBlobEdit = null;
+
+        function handleDirectKameraChange(input, mode) {
+            const prefix = mode === 'tambah' ? '' : 'edit-';
+            const imgPreview = document.getElementById(prefix + 'kamera-preview-img');
+            const statusText = document.getElementById(prefix + 'kamera-status-text');
+
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                if (mode === 'tambah') cameraBlobTambah = file;
+                else cameraBlobEdit = file;
+
+                imgPreview.src = URL.createObjectURL(file);
+                imgPreview.classList.remove('d-none');
+                statusText.innerHTML = '<span class="text-success fw-bold">✓ Foto dari kamera berhasil dipilih!</span>';
+            }
+        }
+        window.handleDirectKameraChange = handleDirectKameraChange;
 
         function switchFotoTab(mode, tab) {
             const uploadBtn = document.getElementById(mode === 'tambah' ? 'tab-upload-btn' : 'edit-tab-upload-btn');
