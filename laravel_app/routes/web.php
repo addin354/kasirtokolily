@@ -287,19 +287,51 @@ Route::middleware(['auth'])->group(function () {
     }
 });
 
-/* Fallback route to serve uploaded public storage files (images/retur/etc.) on hosting without symlink dependence */
-Route::get('/storage/{path}', function ($path) {
-    $cleanPath = ltrim($path, '/');
-    if (str_starts_with($cleanPath, 'public/')) {
-        $cleanPath = substr($cleanPath, 7);
+/* Universal Failsafe Storage Route: Serves uploaded files (retur, products, etc.) seamlessly on any hosting environment */
+Route::get('/{storage_path}', function ($storagePath) {
+    $cleanPath = ltrim($storagePath, '/');
+
+    // Remove any leading domain or directory prefix artifacts
+    $prefixesToStrip = [
+        'public_html/storage/',
+        'public_html/',
+        'storage/',
+        'public/storage/',
+        'public/',
+    ];
+
+    foreach ($prefixesToStrip as $prefix) {
+        if (str_starts_with($cleanPath, $prefix)) {
+            $cleanPath = substr($cleanPath, strlen($prefix));
+        }
     }
-    $fullPath = storage_path('app/public/' . $cleanPath);
-    if (! file_exists($fullPath)) {
-        $fullPath = storage_path('app/' . $cleanPath);
+
+    $cleanPath = ltrim($cleanPath, '/');
+
+    // Search target file across all possible storage directories
+    $possibleFilePaths = [
+        storage_path('app/public/' . $cleanPath),
+        storage_path('app/' . $cleanPath),
+        base_path('../storage/app/public/' . $cleanPath),
+        base_path('../public_html/storage/' . $cleanPath),
+        public_path('storage/' . $cleanPath),
+    ];
+
+    $targetFile = null;
+    foreach ($possibleFilePaths as $filePath) {
+        if (file_exists($filePath) && !is_dir($filePath)) {
+            $targetFile = realpath($filePath);
+            break;
+        }
     }
-    if (! file_exists($fullPath)) {
-        abort(404);
+
+    if (! $targetFile) {
+        abort(404, 'File storage tidak ditemukan.');
     }
-    $mime = mime_content_type($fullPath) ?: 'image/jpeg';
-    return response()->file($fullPath, ['Content-Type' => $mime]);
-})->where('path', '.*')->name('storage.fallback');
+
+    $mime = mime_content_type($targetFile) ?: 'image/jpeg';
+    return response()->file($targetFile, [
+        'Content-Type' => $mime,
+        'Cache-Control' => 'public, max-age=86400',
+    ]);
+})->where('storage_path', '(public_html\/|public\/)?storage\/.*')->name('storage.fallback');
