@@ -27,12 +27,18 @@ use Illuminate\Support\Facades\Route;
 Route::get('/jalankan-migrasi', function() {
     \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
     (new \Database\Seeders\SupplierSeeder())->run();
-    return "Migrasi database & Seeder supplier berhasil dijalankan! Total supplier: " . \App\Models\Supplier::count();
+    (new \Database\Seeders\TransaksiSeeder())->run();
+    return "Migrasi database, Seeder supplier & Seeder transaksi berhasil dijalankan! Total transaksi: " . \App\Models\Transaksi::count();
 });
 
 Route::get('/jalankan-seeder-supplier', function() {
     (new \Database\Seeders\SupplierSeeder())->run();
     return "Seeder supplier berhasil dijalankan! Total supplier: " . \App\Models\Supplier::count();
+});
+
+Route::get('/jalankan-seeder-transaksi', function() {
+    (new \Database\Seeders\TransaksiSeeder())->run();
+    return "Seeder transaksi penjualan berhasil dijalankan! Total transaksi: " . \App\Models\Transaksi::count();
 });
 
 Route::get('/', function () {

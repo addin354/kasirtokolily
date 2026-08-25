@@ -382,6 +382,10 @@ class LaporanController extends Controller
     {
         Gate::authorize('view-laporan-finansial');
 
+        if (\App\Models\Transaksi::query()->count() === 0) {
+            (new \Database\Seeders\TransaksiSeeder())->run();
+        }
+
         [$salesQuery, $expensesQuery, $purchasesQuery, $tipe, $tanggal, $bulan, $tahun, $dari, $sampai] = $this->resolveLabaBase($request);
 
         $sales = (clone $salesQuery)->get();

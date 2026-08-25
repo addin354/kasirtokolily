@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\DetailTransaksi;
 use App\Models\Product;
 use App\Models\Transaksi;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
@@ -13,52 +12,79 @@ class TransaksiSeeder extends Seeder
 {
     public function run(): void
     {
-        // Get or create a kasir user
-        $kasir = User::whereRole('kasir')->first();
-        if (!$kasir) {
-            $kasir = User::factory()->create(['role' => 'kasir']);
-        }
+        // 1. Pastikan seluruh produk memiliki harga_beli (modal) yang realistis di bawah harga_jual (margin 25%)
+        Product::where('is_active', true)->each(function ($product) {
+            $hargaJual = (float) $product->harga_jual;
+            $hargaBeli = (float) $product->harga_beli;
 
-        // Get products
-        $products = Product::limit(5)->get();
+            if ($hargaJual > 0 && ($hargaBeli <= 0 || $hargaBeli >= $hargaJual)) {
+                $product->update([
+                    'harga_beli' => max(100, round($hargaJual * 0.75, -2)),
+                ]);
+            }
+        });
+
+        // 2. Ambil produk aktif yang valid
+        $products = Product::where('is_active', true)->where('harga_jual', '>', 0)->get();
         if ($products->isEmpty()) {
-            $this->command->info('No products found. Skipping transaksi seeding.');
             return;
         }
 
-        // Create sample transactions for this month
-        for ($i = 1; $i <= 5; $i++) {
-            $date = Carbon::now()->subDays(rand(0, 20))->setTime(rand(8, 17), rand(0, 59));
-            
+        $paymentMethods = ['Cash', 'Transfer Bank', 'QRIS'];
+        $bankNames = ['BCA', 'Mandiri', 'BRI', 'BNI'];
+
+        // 3. Buat 35 transaksi penjualan baru yang menguntungkan dari 30 hari yang lalu hingga HARI INI
+        for ($i = 0; $i < 35; $i++) {
+            $daysAgo = rand(0, 30);
+            $date = Carbon::now()->subDays($daysAgo)->setTime(rand(8, 20), rand(0, 59));
+            $metode = $paymentMethods[array_rand($paymentMethods)];
+
             $transaksi = Transaksi::create([
-                'user_id' => $kasir->id,
+                'nama_pelanggan' => rand(0, 1) ? 'Pelanggan Umum' : 'Pelanggan ' . rand(1, 10),
                 'tanggal' => $date,
                 'total' => 0,
-                'jenis_pembayaran' => 'cash',
+                'bayar' => 0,
+                'kembalian' => 0,
+                'metode_pembayaran' => $metode,
+                'nama_bank' => $metode === 'Transfer Bank' ? $bankNames[array_rand($bankNames)] : null,
+                'nomor_referensi' => $metode !== 'Cash' ? 'REF-' . strtoupper(bin2hex(random_bytes(4))) : null,
+                'created_at' => $date,
+                'updated_at' => $date,
             ]);
 
-            // Add 2-4 line items
             $total = 0;
-            $itemCount = rand(2, 4);
-            for ($j = 0; $j < $itemCount; $j++) {
-                $product = $products->random();
+            $itemCount = rand(2, 5);
+            $selectedProducts = $products->random(min($itemCount, $products->count()));
+
+            foreach ($selectedProducts as $product) {
                 $qty = rand(1, 5);
-                $subtotal = $product->harga * $qty;
+                $hargaJual = (float) $product->harga_jual;
+                $subtotal = $hargaJual * $qty;
 
                 DetailTransaksi::create([
                     'transaksi_id' => $transaksi->id,
                     'produk_id' => $product->id,
+                    'jenis_harga' => 'eceran',
+                    'qty_input' => $qty,
+                    'qty_pcs' => $qty,
                     'qty' => $qty,
-                    'harga' => $product->harga,
+                    'harga' => $hargaJual,
                     'subtotal' => $subtotal,
+                    'created_at' => $date,
+                    'updated_at' => $date,
                 ]);
 
                 $total += $subtotal;
             }
 
-            $transaksi->update(['total' => $total]);
-        }
+            $bayar = $metode === 'Cash' ? (max($total, ceil($total / 50000) * 50000)) : $total;
+            $kembalian = max(0, $bayar - $total);
 
-        $this->command->info('Transaksi seeding completed: ' . Transaksi::count() . ' transaksi created.');
+            $transaksi->update([
+                'total' => $total,
+                'bayar' => $bayar,
+                'kembalian' => $kembalian,
+            ]);
+        }
     }
 }
