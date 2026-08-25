@@ -14,6 +14,10 @@ class PengeluaranController extends Controller
     {
         $this->authorize('viewAny', Pengeluaran::class);
 
+        if (Pengeluaran::query()->count() < 10) {
+            (new \Database\Seeders\PengeluaranSeeder())->run();
+        }
+
         $q = trim((string) $request->query('q', ''));
         $kategori = $request->query('kategori');
         $tanggalDari = $request->query('tanggal_dari');
