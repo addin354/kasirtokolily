@@ -132,7 +132,7 @@
                             if (str_starts_with($fotoPath, 'public/')) {
                                 $fotoPath = substr($fotoPath, 7);
                             }
-                            $fotoUrl = asset('storage/' . $fotoPath);
+                            $fotoUrl = url('storage/' . $fotoPath);
                         } else {
                             $fotoUrl = null;
                         }

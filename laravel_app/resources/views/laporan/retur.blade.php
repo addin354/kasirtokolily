@@ -317,6 +317,10 @@
                                 <th class="ps-3 py-2">Status</th>
                                 <td id="detail_status" class="pe-3 py-2"></td>
                             </tr>
+                            <tr>
+                                <th class="ps-3 py-2">Foto Bukti</th>
+                                <td id="detail_foto" class="pe-3 py-2"></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -566,6 +570,24 @@
             
             document.getElementById('detail_status').innerHTML = `<span class="badge ${badgeClass}">${status}</span>`;
 
+            const detailFotoEl = document.getElementById('detail_foto');
+            if (detailFotoEl) {
+                if (item.foto) {
+                    let cleanFoto = item.foto.replace(/^\/+/, '');
+                    if (cleanFoto.startsWith('storage/')) cleanFoto = cleanFoto.substring(8);
+                    if (cleanFoto.startsWith('public/')) cleanFoto = cleanFoto.substring(7);
+                    const fotoUrl = `{{ url('storage') }}/${cleanFoto}`;
+                    detailFotoEl.innerHTML = `
+                        <div class="mb-2">
+                            <img src="${fotoUrl}" alt="Foto Bukti Retur" class="img-thumbnail" style="max-height: 180px; object-fit: contain;">
+                        </div>
+                        <a href="${fotoUrl}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary py-0 px-2 small">Lihat Resolusi Penuh</a>
+                    `;
+                } else {
+                    detailFotoEl.innerHTML = '<span class="text-muted small">Tidak ada foto bukti</span>';
+                }
+            }
+
             document.getElementById('btn-print-detail').onclick = function() {
                 printRetur(index);
             };
@@ -595,7 +617,10 @@
             fileInput.value = '';
             
             if (item.foto) {
-                previewImg.src = `/storage/${item.foto}`;
+                let cleanFoto = item.foto.replace(/^\/+/, '');
+                if (cleanFoto.startsWith('storage/')) cleanFoto = cleanFoto.substring(8);
+                if (cleanFoto.startsWith('public/')) cleanFoto = cleanFoto.substring(7);
+                previewImg.src = `{{ url('storage') }}/${cleanFoto}`;
                 previewContainer.classList.remove('d-none');
             } else {
                 previewImg.src = '';
