@@ -208,31 +208,59 @@
             width: 100% !important;
         }
 
-        /* 2. Red Laser Guideline in the middle of scanner container */
+        /* 2. Red Laser Guideline in the exact middle of scanner container */
         .scanner-laser-overlay {
             position: absolute;
             top: 50%;
-            left: 5%;
-            right: 5%;
+            left: 0;
+            right: 0;
             height: 3px;
-            background: linear-gradient(90deg, rgba(255, 0, 0, 0.2) 0%, #ff1a1a 15%, #ff4d4d 50%, #ff1a1a 85%, rgba(255, 0, 0, 0.2) 100%);
-            box-shadow: 0 0 12px #ff0000, 0 0 5px #ffffff;
-            border-radius: 3px;
+            background: #ff0033;
+            box-shadow: 0 0 14px #ff0033, 0 0 6px #ffffff;
             z-index: 25;
             pointer-events: none;
-            animation: laserPulse 1.6s ease-in-out infinite alternate;
+            transform: translateY(-50%);
+            animation: laserScanLine 1.8s ease-in-out infinite alternate;
         }
 
-        @keyframes laserPulse {
+        .scanner-laser-overlay::before {
+            content: 'POSISIKAN BARCODE DI GARIS MERAH';
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 0, 51, 0.95);
+            color: #ffffff;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            padding: 2px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        .scanner-laser-overlay::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ff0033;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #ff0033;
+        }
+
+        @keyframes laserScanLine {
             0% {
-                opacity: 0.8;
-                transform: translateY(-8px);
-                box-shadow: 0 0 8px #ff0000, 0 0 3px #ffffff;
+                opacity: 0.85;
+                transform: translateY(-50%) scaleX(0.96);
             }
             100% {
                 opacity: 1;
-                transform: translateY(8px);
-                box-shadow: 0 0 16px #ff0000, 0 0 6px #ffffff;
+                transform: translateY(-50%) scaleX(1.02);
             }
         }
 

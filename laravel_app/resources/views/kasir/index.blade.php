@@ -939,7 +939,19 @@
                 readerEl.appendChild(laserLine);
             }
 
-            html5QrCode = new Html5Qrcode('kasir-qr-reader');
+            // Restrukturasi scanner hanya menerima format Barcode 1D Produk (EAN-13, EAN-8, CODE-128, CODE-39, UPC, dll)
+            var barcodeFormats = (typeof Html5QrcodeSupportedFormats !== 'undefined') ? [
+                Html5QrcodeSupportedFormats.EAN_13,
+                Html5QrcodeSupportedFormats.EAN_8,
+                Html5QrcodeSupportedFormats.CODE_128,
+                Html5QrcodeSupportedFormats.CODE_39,
+                Html5QrcodeSupportedFormats.UPC_A,
+                Html5QrcodeSupportedFormats.UPC_E,
+                Html5QrcodeSupportedFormats.ITF,
+                Html5QrcodeSupportedFormats.CODE_93
+            ] : undefined;
+
+            html5QrCode = new Html5Qrcode('kasir-qr-reader', barcodeFormats ? { formatsToSupport: barcodeFormats } : undefined);
             scanning = true;
             html5QrCode.start(
                 { facingMode: 'environment' },
