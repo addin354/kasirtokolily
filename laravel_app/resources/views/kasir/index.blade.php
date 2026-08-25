@@ -931,11 +931,32 @@
             readerEl.style.display = 'block';
             camBtn.setAttribute('aria-expanded', 'true');
             camBtn.textContent = 'Matikan kamera';
+
+            // Tambahkan garis laser merah pembantu di tengah kamera
+            if (!readerEl.querySelector('.scanner-laser-overlay')) {
+                var laserLine = document.createElement('div');
+                laserLine.className = 'scanner-laser-overlay';
+                readerEl.appendChild(laserLine);
+            }
+
             html5QrCode = new Html5Qrcode('kasir-qr-reader');
             scanning = true;
             html5QrCode.start(
                 { facingMode: 'environment' },
-                { fps: 10, qrbox: { width: 250, height: 250 } },
+                {
+                    fps: 15,
+                    qrbox: function(w, h) {
+                        var minEdge = Math.min(w, h);
+                        return {
+                            width: Math.floor(minEdge * 0.85),
+                            height: Math.floor(minEdge * 0.50)
+                        };
+                    },
+                    videoConstraints: {
+                        facingMode: { ideal: 'environment' },
+                        focusMode: { ideal: 'continuous' }
+                    }
+                },
                 function (decodedText) {
                     $input.val(decodedText);
                     html5QrCode.stop().then(function () {

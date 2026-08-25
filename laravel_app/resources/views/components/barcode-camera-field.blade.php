@@ -48,11 +48,31 @@
         readerEl.style.display = 'block';
         btn.setAttribute('aria-expanded', 'true');
         btn.textContent = 'Matikan kamera';
+
+        if (!readerEl.querySelector('.scanner-laser-overlay')) {
+            var laserLine = document.createElement('div');
+            laserLine.className = 'scanner-laser-overlay';
+            readerEl.appendChild(laserLine);
+        }
+
         html5QrCode = new Html5Qrcode(readerEl.id);
         scanning = true;
         html5QrCode.start(
             { facingMode: 'environment' },
-            { fps: 10, qrbox: { width: 250, height: 250 } },
+            {
+                fps: 15,
+                qrbox: function(w, h) {
+                    var minEdge = Math.min(w, h);
+                    return {
+                        width: Math.floor(minEdge * 0.85),
+                        height: Math.floor(minEdge * 0.50)
+                    };
+                },
+                videoConstraints: {
+                    facingMode: { ideal: 'environment' },
+                    focusMode: { ideal: 'continuous' }
+                }
+            },
             function (decodedText) {
                 input.value = decodedText;
                 html5QrCode.stop().then(function () {

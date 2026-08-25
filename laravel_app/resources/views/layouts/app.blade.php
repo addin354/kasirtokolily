@@ -184,6 +184,58 @@
             border-radius: 0 0.5rem 0.5rem 0;
         }
 
+        /* ==========================================================================
+           ENHANCED BARCODE SCANNER WITH ZOOM & LASER ALIGNMENT GUIDELINE
+           ========================================================================== */
+        div[id*="-qr-reader"],
+        #kasir-qr-reader,
+        #stok-qr-reader,
+        #produk-cari-qr-reader {
+            position: relative !important;
+            overflow: hidden !important;
+            border-radius: 14px !important;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        /* 1. Zoom Camera Feed (1.35x zoom) so small barcodes are enlarged & clear */
+        div[id*="-qr-reader"] video,
+        #kasir-qr-reader video,
+        #stok-qr-reader video,
+        #produk-cari-qr-reader video {
+            transform: scale(1.35) !important;
+            transform-origin: center center !important;
+            object-fit: cover !important;
+            width: 100% !important;
+        }
+
+        /* 2. Red Laser Guideline in the middle of scanner container */
+        .scanner-laser-overlay {
+            position: absolute;
+            top: 50%;
+            left: 5%;
+            right: 5%;
+            height: 3px;
+            background: linear-gradient(90deg, rgba(255, 0, 0, 0.2) 0%, #ff1a1a 15%, #ff4d4d 50%, #ff1a1a 85%, rgba(255, 0, 0, 0.2) 100%);
+            box-shadow: 0 0 12px #ff0000, 0 0 5px #ffffff;
+            border-radius: 3px;
+            z-index: 25;
+            pointer-events: none;
+            animation: laserPulse 1.6s ease-in-out infinite alternate;
+        }
+
+        @keyframes laserPulse {
+            0% {
+                opacity: 0.8;
+                transform: translateY(-8px);
+                box-shadow: 0 0 8px #ff0000, 0 0 3px #ffffff;
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(8px);
+                box-shadow: 0 0 16px #ff0000, 0 0 6px #ffffff;
+            }
+        }
+
         /* Vibrant Greeting Banners per Role */
         body.role-theme-owner .card-greeting-role {
             background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%) !important;
