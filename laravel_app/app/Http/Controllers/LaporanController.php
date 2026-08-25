@@ -1025,7 +1025,7 @@ class LaporanController extends Controller
         }
 
         $salesQuery = DB::table('transaksi as t')
-            ->leftJoin(DB::raw('(SELECT dt.transaksi_id, SUM(COALESCE(NULLIF(dt.qty_pcs, 0), dt.qty) * p.harga_beli) as hpp FROM detail_transaksi dt JOIN produks p ON p.id = dt.produk_id GROUP BY dt.transaksi_id) as sub'), 'sub.transaksi_id', '=', 't.id')
+            ->leftJoin(DB::raw('(SELECT dt.transaksi_id, SUM(COALESCE(NULLIF(dt.qty_pcs, 0), dt.qty) * CASE WHEN p.harga_beli > 0 AND p.harga_beli < dt.harga THEN p.harga_beli ELSE ROUND(dt.harga * 0.75, 2) END) as hpp FROM detail_transaksi dt JOIN produks p ON p.id = dt.produk_id GROUP BY dt.transaksi_id) as sub'), 'sub.transaksi_id', '=', 't.id')
             ->select(['t.id', 't.tanggal', 't.total', DB::raw('COALESCE(sub.hpp, 0) as hpp')]);
 
         $expensesQuery = DB::table('pengeluarans');

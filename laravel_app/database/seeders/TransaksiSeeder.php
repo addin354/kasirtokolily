@@ -13,16 +13,11 @@ class TransaksiSeeder extends Seeder
     public function run(): void
     {
         // 1. Pastikan seluruh produk memiliki harga_beli (modal) yang realistis di bawah harga_jual (margin 25%)
-        Product::where('is_active', true)->each(function ($product) {
-            $hargaJual = (float) $product->harga_jual;
-            $hargaBeli = (float) $product->harga_beli;
-
-            if ($hargaJual > 0 && ($hargaBeli <= 0 || $hargaBeli >= $hargaJual)) {
-                $product->update([
-                    'harga_beli' => max(100, round($hargaJual * 0.75, -2)),
-                ]);
-            }
-        });
+        \Illuminate\Support\Facades\DB::table('produks')
+            ->whereRaw('harga_jual > 0 AND (harga_beli >= harga_jual OR harga_beli <= 0 OR harga_beli IS NULL)')
+            ->update([
+                'harga_beli' => \Illuminate\Support\Facades\DB::raw('ROUND(harga_jual * 0.75, -2)')
+            ]);
 
         // 2. Ambil produk aktif yang valid
         $products = Product::where('is_active', true)->where('harga_jual', '>', 0)->get();
