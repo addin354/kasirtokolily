@@ -53,6 +53,11 @@ Route::get('/jalankan-seeder-pengeluaran', function() {
     return "Seeder pengeluaran toko berhasil dijalankan! Total pengeluaran: " . \App\Models\Pengeluaran::count();
 });
 
+Route::get('/naskah-sidang-pdf', function() {
+    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.naskah_sidang')->setPaper('a4', 'portrait');
+    return $pdf->stream('Naskah_Panduan_Demo_Sidang_Skripsi.pdf');
+});
+
 Route::get('/', function () {
     if (auth()->check()) {
         return redirect()->route(auth()->user()->defaultDashboardRoute());
