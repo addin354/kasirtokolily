@@ -155,11 +155,27 @@ class PembelianController extends Controller
         $predictedNomor = $prefix . str_pad($num, 4, '0', STR_PAD_LEFT);
 
         $prefilledProduct = null;
+        $prefilledQty = 1;
         if ($request->has('produk_id')) {
             $prefilledProduct = Product::find($request->input('produk_id'));
+            if ($prefilledProduct) {
+                $prefilledQty = max(1, (int) $request->input('qty', $prefilledProduct->rekomendasiJumlahOrder()));
+            }
         }
 
-        return view('pembelian.create', compact('suppliers', 'predictedNomor', 'products', 'prefilledProduct'));
+        $recommendedRestokProducts = Product::where('is_active', true)
+            ->whereColumn('stok', '<=', 'stok_minimum')
+            ->orderBy('nama')
+            ->get();
+
+        return view('pembelian.create', compact(
+            'suppliers',
+            'predictedNomor',
+            'products',
+            'prefilledProduct',
+            'prefilledQty',
+            'recommendedRestokProducts'
+        ));
     }
 
     public function store(StorePembelianRequest $request)

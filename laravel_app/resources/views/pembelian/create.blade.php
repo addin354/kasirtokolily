@@ -65,6 +65,36 @@
             </div>
         </div>
 
+        @if (isset($recommendedRestokProducts) && $recommendedRestokProducts->isNotEmpty())
+            <div class="card border-warning shadow-sm mb-4">
+                <div class="card-header bg-warning-subtle text-dark fw-bold d-flex align-items-center justify-content-between py-2">
+                    <span><i class="bi bi-lightbulb-fill text-warning me-1"></i> Rekomendasi Jumlah Order Restok ({{ $recommendedRestokProducts->count() }} Produk Restok)</span>
+                    <span class="small text-muted font-normal">Klik tombol di bawah untuk memasukkan langsung ke nota pembelian</span>
+                </div>
+                <div class="card-body p-2" style="max-height: 160px; overflow-y: auto;">
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach ($recommendedRestokProducts as $rec)
+                            @php
+                                $recQty = $rec->rekomendasiJumlahOrder();
+                                $searchVal = '[' . $rec->kode . '] ' . $rec->nama . ($rec->barcode ? ' (' . $rec->barcode . ')' : '');
+                            @endphp
+                            <button type="button" 
+                                    class="btn btn-outline-warning text-dark btn-sm d-flex align-items-center gap-1 btn-add-recommended"
+                                    data-id="{{ $rec->id }}"
+                                    data-search="{{ $searchVal }}"
+                                    data-nama="{{ $rec->nama }}"
+                                    data-qty="{{ $recQty }}"
+                                    data-harga="{{ (float) $rec->harga_beli }}">
+                                <i class="bi bi-plus-circle-fill text-success"></i>
+                                <span><strong>{{ $rec->nama }}</strong></span>
+                                <span class="badge bg-success text-white ms-1">+ {{ $recQty }} {{ $rec->satuanModel?->nama ?? 'pcs' }}</span>
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <div class="card shadow-sm mb-4">
             <div class="card-header d-flex justify-content-between align-items-center fw-semibold">
                 <span>Bagian Detail</span>
@@ -266,12 +296,48 @@
                     produk_id: "{{ $prefilledProduct->id }}",
                     search_val: "{{ $searchVal }}",
                     nama: "{{ $prefilledProduct->nama }}",
-                    qty: 1,
+                    qty: "{{ $prefilledQty ?? 1 }}",
                     harga_beli: "{{ $prefilledProduct->harga_beli }}"
                 });
             @else
                 addRow();
             @endif
+
+            // Recommendation buttons click event
+            document.querySelectorAll('.btn-add-recommended').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const search = this.getAttribute('data-search');
+                    const nama = this.getAttribute('data-nama');
+                    const qty = this.getAttribute('data-qty');
+                    const harga = this.getAttribute('data-harga');
+
+                    // Check if already in table
+                    const existingInput = Array.from(container.querySelectorAll('.product-id-input')).find(inp => inp.value == id);
+                    if (existingInput) {
+                        const tr = existingInput.closest('tr');
+                        const qtyInp = tr.querySelector('.qty-input');
+                        qtyInp.value = parseFloat(qtyInp.value || 0) + parseFloat(qty);
+                        qtyInp.dispatchEvent(new Event('input'));
+                    } else {
+                        // Check if first row is empty
+                        const firstRow = container.querySelector('tr');
+                        const firstIdInp = firstRow ? firstRow.querySelector('.product-id-input') : null;
+                        if (firstRow && firstIdInp && !firstIdInp.value) {
+                            firstRow.remove();
+                        }
+                        addRow({
+                            produk_id: id,
+                            search_val: search,
+                            nama: nama,
+                            qty: qty,
+                            harga_beli: harga
+                        });
+                    }
+                    this.classList.add('disabled');
+                    this.style.opacity = '0.5';
+                });
+            });
         });
     </script>
 @endpush

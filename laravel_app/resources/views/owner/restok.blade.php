@@ -27,17 +27,19 @@
                         <th class="ps-3">Nama Produk</th>
                         <th>Kategori</th>
                         <th>Satuan</th>
-                        <th class="text-end" style="width: 120px;">Stok Saat Ini</th>
-                        <th class="text-end" style="width: 120px;">Minimum</th>
-                        <th class="text-end" style="width: 120px;">Selisih</th>
+                        <th class="text-end" style="width: 110px;">Stok Saat Ini</th>
+                        <th class="text-end" style="width: 100px;">Minimum</th>
+                        <th class="text-center" style="width: 170px;">Rekomendasi Order</th>
                         <th class="ps-3">Supplier Terakhir</th>
-                        <th class="text-center pe-3" style="width: 120px;">Aksi</th>
+                        <th class="text-center pe-3" style="width: 140px;">Aksi</th>
                     </tr>
                     </thead>
                     <tbody>
                     @forelse($products as $p)
                         @php
                             $selisih = max(0, $p->stok_minimum - $p->stok);
+                            $rekomendasiOrder = $p->rekomendasiJumlahOrder();
+                            $avgHarian = $p->rataRataPenjualanHarian(30);
                         @endphp
                         <tr>
                             <td class="ps-3 fw-semibold text-dark">
@@ -48,11 +50,14 @@
                             <td>{{ $p->satuanModel?->nama ?? $p->satuan ?? '—' }}</td>
                             <td class="text-end fw-bold text-warning">{{ (int) $p->stok }}</td>
                             <td class="text-end text-muted">{{ (int) $p->stok_minimum }}</td>
-                            <td class="text-end fw-bold text-danger">{{ $selisih }}</td>
+                            <td class="text-center">
+                                <span class="badge bg-success fs-6 px-2 py-1 shadow-sm">+ {{ $rekomendasiOrder }} {{ $p->satuanModel?->nama ?? 'pcs' }}</span>
+                                <div class="text-muted small" style="font-size: 0.72rem;">Selisih: {{ $selisih }} · Rata-rata: {{ $avgHarian }}/hari</div>
+                            </td>
                             <td class="ps-3 text-secondary">{{ $p->supplierTerakhir() ?? '—' }}</td>
                             <td class="text-center pe-3">
-                                <a href="{{ route('pembelian.create', ['produk_id' => $p->id]) }}" class="btn btn-sm btn-success fw-semibold d-inline-flex align-items-center gap-1 shadow-sm">
-                                    <i class="bi bi-cart-plus-fill"></i> Beli
+                                <a href="{{ route('pembelian.create', ['produk_id' => $p->id, 'qty' => $rekomendasiOrder]) }}" class="btn btn-sm btn-success fw-bold d-inline-flex align-items-center gap-1 shadow-sm" title="Buat nota pembelian dengan rekomendasi order {{ $rekomendasiOrder }} pcs">
+                                    <i class="bi bi-cart-plus-fill"></i> Beli ({{ $rekomendasiOrder }})
                                 </a>
                             </td>
                         </tr>

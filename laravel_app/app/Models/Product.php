@@ -155,4 +155,43 @@ class Product extends Model
 
         return '—';
     }
+
+    /**
+     * Rata-rata penjualan harian (pcs per hari) dalam 30 hari terakhir.
+     */
+    public function rataRataPenjualanHarian(int $days = 30): float
+    {
+        $startDate = now()->subDays($days)->startOfDay();
+
+        $totalQty = DetailTransaksi::query()
+            ->where('produk_id', $this->id)
+            ->whereHas('transaksi', function ($q) use ($startDate) {
+                $q->where('created_at', '>=', $startDate);
+            })
+            ->sum('qty');
+
+        return round($totalQty / max(1, $days), 2);
+    }
+
+    /**
+     * Rekomendasi kuantitas order (reorder quantity) selanjutnya.
+     * Menggunakan buffer stok minimum dan perkiraan tren penjualan 14 hari kedepan.
+     */
+    public function rekomendasiJumlahOrder(): int
+    {
+        $stokCurrent = max(0, (float) $this->stok);
+        $stokMin = (float) ($this->stok_minimum ?? 10);
+
+        // Perkiraan kebutuhan stok untuk 14 hari kedepan berdasarkan rata-rata harian
+        $avgDailySales = $this->rataRataPenjualanHarian(30);
+        $demand14Hari = ceil($avgDailySales * 14);
+
+        // Target stok ideal = max(Target 14 Hari, 2x Stok Minimum)
+        $targetStokIdeal = max($demand14Hari, $stokMin * 2, 10);
+
+        // Rekomendasi Order = Target Stok Ideal - Stok Saat Ini
+        $rekomendasi = (int) ceil($targetStokIdeal - $stokCurrent);
+
+        return max(1, $rekomendasi);
+    }
 }
