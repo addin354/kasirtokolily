@@ -11,10 +11,15 @@ class SupplierController extends Controller
     {
         $this->authorize('viewAny', Supplier::class);
 
+        // Auto-seed default suppliers if total suppliers count < 10
+        if (Supplier::query()->count() < 10) {
+            (new \Database\Seeders\SupplierSeeder())->run();
+        }
+
         $suppliers = Supplier::query()
             ->withCount('stokMasuks')
             ->orderBy('nama_supplier')
-            ->paginate(15);
+            ->paginate(25);
 
         return view('suppliers.index', compact('suppliers'));
     }
