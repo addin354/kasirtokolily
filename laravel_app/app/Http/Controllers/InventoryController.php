@@ -27,8 +27,8 @@ class InventoryController extends Controller
 
         $tab = $request->query('tab', 'opname');
 
-        if ($tab === 'masuk') {
-            return app(StokMasukController::class)->index();
+        if ($tab === 'masuk' || $tab === 'daftar' || $tab === 'kartu') {
+            return redirect()->route('stok-masuk.index', ['tab' => 'opname']);
         }
 
         if ($tab === 'opname') {

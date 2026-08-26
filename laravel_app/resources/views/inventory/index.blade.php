@@ -56,23 +56,18 @@
         <div class="card-header bg-white p-0 border-bottom">
             <ul class="nav nav-tabs border-0" id="inventoryTabs" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link {{ $tab === 'masuk' ? 'active' : '' }}" href="{{ route('stok-masuk.index', ['tab' => 'masuk']) }}">
-                        <i class="bi bi-box-arrow-in-down me-1"></i> A. Input Stok Masuk
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link {{ $tab === 'opname' ? 'active' : '' }}" href="{{ route('stok-masuk.index', ['tab' => 'opname']) }}">
-                        <i class="bi bi-check2-square me-1"></i> B. Stock Opname
+                        <i class="bi bi-check2-square me-1"></i> A. Stock Opname
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ $tab === 'penyesuaian' ? 'active' : '' }}" href="{{ route('stok-masuk.index', ['tab' => 'penyesuaian']) }}">
-                        <i class="bi bi-sliders me-1"></i> C. Penyesuaian Stok
+                        <i class="bi bi-sliders me-1"></i> B. Penyesuaian Stok
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ $tab === 'riwayat' ? 'active' : '' }}" href="{{ route('stok-masuk.index', ['tab' => 'riwayat']) }}">
-                        <i class="bi bi-clock-history me-1"></i> D. Riwayat Perubahan (Kartu Stok)
+                        <i class="bi bi-clock-history me-1"></i> C. Riwayat Perubahan (Kartu Stok)
                     </a>
                 </li>
             </ul>
