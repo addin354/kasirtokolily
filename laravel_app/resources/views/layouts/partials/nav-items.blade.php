@@ -77,27 +77,51 @@
             </a>
         </li>
         <li class="nav-item">
-            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.reports') && request('report_type') === 'terlaris' ? 'active' : '' }}" href="{{ route('owner.reports', ['report_type' => 'terlaris']) }}">
-                <i class="bi bi-trophy me-2"></i> Laporan 10 Produk Terlaris
+            @php
+                $isOwnerReportActive = request()->routeIs('owner.reports');
+                $collapseOwnerReportId = 'collapseLaporanProduk_owner_' . ($navSidebar ? 'sb' : ($navMobile ? 'mb' : 'gen'));
+            @endphp
+            <a class="nav-link {{ $isOwnerReportActive ? 'active' : '' }} d-flex justify-content-between align-items-center" 
+               data-bs-toggle="collapse" 
+               href="#{{ $collapseOwnerReportId }}" 
+               role="button" 
+               aria-expanded="{{ $isOwnerReportActive ? 'true' : 'false' }}" 
+               aria-controls="{{ $collapseOwnerReportId }}">
+                <span><i class="bi bi-box-seam me-2"></i> Laporan Produk</span>
+                <div class="d-flex align-items-center gap-1">
+                    @if($lowStockCount > 0)
+                        <span class="badge bg-warning text-dark rounded-pill" title="{{ $lowStockCount }} produk perlu restok">{{ $lowStockCount }}</span>
+                    @endif
+                    <i class="bi bi-chevron-down small"></i>
+                </div>
             </a>
-        </li>
-        <li class="nav-item">
-            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.reports') && request('report_type') === 'persediaan' ? 'active' : '' }}" href="{{ route('owner.reports', ['report_type' => 'persediaan']) }}">
-                <i class="bi bi-boxes me-2"></i> Laporan Persediaan Barang
-            </a>
-        </li>
-        <li class="nav-item">
-            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.reports') && request('report_type') === 'restok' ? 'active' : '' }} d-flex justify-content-between align-items-center" href="{{ route('owner.reports', ['report_type' => 'restok']) }}">
-                <span><i class="bi bi-exclamation-triangle me-2"></i> Laporan Produk Perlu Restok</span>
-                @if($lowStockCount > 0)
-                    <span class="badge bg-warning text-dark rounded-pill">{{ $lowStockCount }}</span>
-                @endif
-            </a>
-        </li>
-        <li class="nav-item">
-            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.reports') && request('report_type') === 'produk' ? 'active' : '' }}" href="{{ route('owner.reports', ['report_type' => 'produk']) }}">
-                <i class="bi bi-file-earmark-spreadsheet me-2"></i> Laporan Daftar Semua Produk
-            </a>
+            <div class="collapse {{ $isOwnerReportActive ? 'show' : '' }} ps-2" id="{{ $collapseOwnerReportId }}">
+                <ul class="nav flex-column gap-1 pt-1 border-start border-light border-opacity-25 ms-2 ps-2">
+                    <li class="nav-item">
+                        <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link py-1 px-2 small {{ request()->routeIs('owner.reports') && request('report_type', 'terlaris') === 'terlaris' ? 'fw-bold text-primary active' : '' }}" href="{{ route('owner.reports', ['report_type' => 'terlaris']) }}">
+                            <i class="bi bi-trophy me-2"></i> 10 Produk Terlaris
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link py-1 px-2 small {{ request()->routeIs('owner.reports') && request('report_type') === 'persediaan' ? 'fw-bold text-primary active' : '' }}" href="{{ route('owner.reports', ['report_type' => 'persediaan']) }}">
+                            <i class="bi bi-boxes me-2"></i> Persediaan Barang
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link py-1 px-2 small d-flex justify-content-between align-items-center {{ request()->routeIs('owner.reports') && request('report_type') === 'restok' ? 'fw-bold text-primary active' : '' }}" href="{{ route('owner.reports', ['report_type' => 'restok']) }}">
+                            <span><i class="bi bi-exclamation-triangle me-2"></i> Produk Perlu Restok</span>
+                            @if($lowStockCount > 0)
+                                <span class="badge bg-warning text-dark rounded-pill" style="font-size: 0.7rem;">{{ $lowStockCount }}</span>
+                            @endif
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link py-1 px-2 small {{ request()->routeIs('owner.reports') && request('report_type') === 'produk' ? 'fw-bold text-primary active' : '' }}" href="{{ route('owner.reports', ['report_type' => 'produk']) }}">
+                            <i class="bi bi-file-earmark-spreadsheet me-2"></i> Daftar Semua Produk
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </li>
 
 
@@ -178,27 +202,51 @@
             </a>
         </li>
         <li class="nav-item">
-            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.reports') && request('report_type') === 'terlaris' ? 'active' : '' }}" href="{{ route('owner.reports', ['report_type' => 'terlaris']) }}">
-                <i class="bi bi-trophy me-2"></i> Laporan 10 Produk Terlaris
+            @php
+                $isAdminReportActive = request()->routeIs('owner.reports');
+                $collapseAdminReportId = 'collapseLaporanProduk_admin_' . ($navSidebar ? 'sb' : ($navMobile ? 'mb' : 'gen'));
+            @endphp
+            <a class="nav-link {{ $isAdminReportActive ? 'active' : '' }} d-flex justify-content-between align-items-center" 
+               data-bs-toggle="collapse" 
+               href="#{{ $collapseAdminReportId }}" 
+               role="button" 
+               aria-expanded="{{ $isAdminReportActive ? 'true' : 'false' }}" 
+               aria-controls="{{ $collapseAdminReportId }}">
+                <span><i class="bi bi-box-seam me-2"></i> Laporan Produk</span>
+                <div class="d-flex align-items-center gap-1">
+                    @if($lowStockCount > 0)
+                        <span class="badge bg-warning text-dark rounded-pill" title="{{ $lowStockCount }} produk perlu restok">{{ $lowStockCount }}</span>
+                    @endif
+                    <i class="bi bi-chevron-down small"></i>
+                </div>
             </a>
-        </li>
-        <li class="nav-item">
-            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.reports') && request('report_type') === 'persediaan' ? 'active' : '' }}" href="{{ route('owner.reports', ['report_type' => 'persediaan']) }}">
-                <i class="bi bi-boxes me-2"></i> Laporan Persediaan Barang
-            </a>
-        </li>
-        <li class="nav-item">
-            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.reports') && request('report_type') === 'restok' ? 'active' : '' }} d-flex justify-content-between align-items-center" href="{{ route('owner.reports', ['report_type' => 'restok']) }}">
-                <span><i class="bi bi-exclamation-triangle me-2"></i> Laporan Produk Perlu Restok</span>
-                @if($lowStockCount > 0)
-                    <span class="badge bg-warning text-dark rounded-pill">{{ $lowStockCount }}</span>
-                @endif
-            </a>
-        </li>
-        <li class="nav-item">
-            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.reports') && request('report_type') === 'produk' ? 'active' : '' }}" href="{{ route('owner.reports', ['report_type' => 'produk']) }}">
-                <i class="bi bi-file-earmark-spreadsheet me-2"></i> Laporan Daftar Semua Produk
-            </a>
+            <div class="collapse {{ $isAdminReportActive ? 'show' : '' }} ps-2" id="{{ $collapseAdminReportId }}">
+                <ul class="nav flex-column gap-1 pt-1 border-start border-light border-opacity-25 ms-2 ps-2">
+                    <li class="nav-item">
+                        <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link py-1 px-2 small {{ request()->routeIs('owner.reports') && request('report_type', 'terlaris') === 'terlaris' ? 'fw-bold text-primary active' : '' }}" href="{{ route('owner.reports', ['report_type' => 'terlaris']) }}">
+                            <i class="bi bi-trophy me-2"></i> 10 Produk Terlaris
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link py-1 px-2 small {{ request()->routeIs('owner.reports') && request('report_type') === 'persediaan' ? 'fw-bold text-primary active' : '' }}" href="{{ route('owner.reports', ['report_type' => 'persediaan']) }}">
+                            <i class="bi bi-boxes me-2"></i> Persediaan Barang
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link py-1 px-2 small d-flex justify-content-between align-items-center {{ request()->routeIs('owner.reports') && request('report_type') === 'restok' ? 'fw-bold text-primary active' : '' }}" href="{{ route('owner.reports', ['report_type' => 'restok']) }}">
+                            <span><i class="bi bi-exclamation-triangle me-2"></i> Produk Perlu Restok</span>
+                            @if($lowStockCount > 0)
+                                <span class="badge bg-warning text-dark rounded-pill" style="font-size: 0.7rem;">{{ $lowStockCount }}</span>
+                            @endif
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link py-1 px-2 small {{ request()->routeIs('owner.reports') && request('report_type') === 'produk' ? 'fw-bold text-primary active' : '' }}" href="{{ route('owner.reports', ['report_type' => 'produk']) }}">
+                            <i class="bi bi-file-earmark-spreadsheet me-2"></i> Daftar Semua Produk
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </li>
 
         {{-- ===== PENGATURAN ===== --}}
