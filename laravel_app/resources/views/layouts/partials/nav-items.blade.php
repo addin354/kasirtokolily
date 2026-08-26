@@ -76,6 +76,29 @@
                 <i class="bi bi-arrow-counterclockwise me-2"></i> Laporan Retur
             </a>
         </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.reports') && request('report_type') === 'terlaris' ? 'active' : '' }}" href="{{ route('owner.reports', ['report_type' => 'terlaris']) }}">
+                <i class="bi bi-trophy me-2"></i> Laporan 10 Produk Terlaris
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.reports') && request('report_type') === 'persediaan' ? 'active' : '' }}" href="{{ route('owner.reports', ['report_type' => 'persediaan']) }}">
+                <i class="bi bi-boxes me-2"></i> Laporan Persediaan Barang
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.reports') && request('report_type') === 'restok' ? 'active' : '' }} d-flex justify-content-between align-items-center" href="{{ route('owner.reports', ['report_type' => 'restok']) }}">
+                <span><i class="bi bi-exclamation-triangle me-2"></i> Laporan Produk Perlu Restok</span>
+                @if($lowStockCount > 0)
+                    <span class="badge bg-warning text-dark rounded-pill">{{ $lowStockCount }}</span>
+                @endif
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.reports') && request('report_type') === 'produk' ? 'active' : '' }}" href="{{ route('owner.reports', ['report_type' => 'produk']) }}">
+                <i class="bi bi-file-earmark-spreadsheet me-2"></i> Laporan Daftar Semua Produk
+            </a>
+        </li>
 
 
     @elseif (auth()->user()->isAdmin())
@@ -152,6 +175,29 @@
         <li class="nav-item">
             <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('laporan.retur') ? 'active' : '' }}" href="{{ route('laporan.retur') }}">
                 <i class="bi bi-arrow-counterclockwise me-2"></i> Laporan Retur
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.reports') && request('report_type') === 'terlaris' ? 'active' : '' }}" href="{{ route('owner.reports', ['report_type' => 'terlaris']) }}">
+                <i class="bi bi-trophy me-2"></i> Laporan 10 Produk Terlaris
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.reports') && request('report_type') === 'persediaan' ? 'active' : '' }}" href="{{ route('owner.reports', ['report_type' => 'persediaan']) }}">
+                <i class="bi bi-boxes me-2"></i> Laporan Persediaan Barang
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.reports') && request('report_type') === 'restok' ? 'active' : '' }} d-flex justify-content-between align-items-center" href="{{ route('owner.reports', ['report_type' => 'restok']) }}">
+                <span><i class="bi bi-exclamation-triangle me-2"></i> Laporan Produk Perlu Restok</span>
+                @if($lowStockCount > 0)
+                    <span class="badge bg-warning text-dark rounded-pill">{{ $lowStockCount }}</span>
+                @endif
+            </a>
+        </li>
+        <li class="nav-item">
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.reports') && request('report_type') === 'produk' ? 'active' : '' }}" href="{{ route('owner.reports', ['report_type' => 'produk']) }}">
+                <i class="bi bi-file-earmark-spreadsheet me-2"></i> Laporan Daftar Semua Produk
             </a>
         </li>
 
