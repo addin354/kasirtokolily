@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\StokLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReportLaporanController extends Controller
@@ -118,16 +120,11 @@ class ReportLaporanController extends Controller
             'foto' => ['nullable', 'image', 'max:2048'],
         ]);
 
-        $product = null;
-        if (!empty($validated['produk_id'])) {
-            $product = Product::query()->find($validated['produk_id']);
+        if (!$this->tableExists('retur')) {
+            return response()->json([
+                'message' => 'Tabel retur belum tersedia di database. Data tidak disimpan.',
+            ], 422);
         }
-        if (!$product && !empty($validated['produk_nama'])) {
-            $product = Product::query()->where('nama', $validated['produk_nama'])->first()
-                    ?? Product::query()->where('nama', 'LIKE', '%' . $validated['produk_nama'] . '%')->first();
-        }
-
-        $productName = $product?->nama ?? $validated['produk_nama'];
 
         $fotoPath = null;
         if ($request->hasFile('foto')) {
@@ -139,32 +136,56 @@ class ReportLaporanController extends Controller
             $status = $validated['status'] ?? 'Menunggu';
         }
 
-        $payload = [
-            'transaksi_id' => $validated['transaksi_id'] ?? null,
-            'produk_id' => $product?->id,
-            'user_id' => auth()->id(),
-            'produk_nama' => $productName,
-            'qty' => (int) $validated['qty'],
-            'alasan' => $validated['alasan'] ?? null,
-            'status' => $status,
-            'tanggal_retur' => $validated['tanggal_retur'] ?? now()->toDateString(),
-            'foto' => $fotoPath,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ];
+        $id = DB::transaction(function () use ($validated, $status, $fotoPath) {
+            $product = null;
+            if (!empty($validated['produk_id'])) {
+                $product = Product::query()->lockForUpdate()->find($validated['produk_id']);
+            }
+            if (!$product && !empty($validated['produk_nama'])) {
+                $product = Product::query()->where('nama', $validated['produk_nama'])->lockForUpdate()->first()
+                        ?? Product::query()->where('nama', 'LIKE', '%' . $validated['produk_nama'] . '%')->lockForUpdate()->first();
+            }
 
-        if ($this->tableExists('retur')) {
-            $id = DB::table('retur')->insertGetId($payload);
+            $productName = $product?->nama ?? $validated['produk_nama'];
+            $noRetur = 'RT-' . date('Ymd') . '-' . Str::random(4);
 
-            return response()->json([
-                'message' => 'Produk retur berhasil ditambahkan.',
-                'data' => ['retur_id' => $id],
-            ], 201);
-        }
+            $payload = [
+                'transaksi_id' => $validated['transaksi_id'] ?? null,
+                'produk_id' => $product?->id,
+                'user_id' => auth()->id(),
+                'no_retur' => $noRetur,
+                'produk_nama' => $productName,
+                'qty' => (int) $validated['qty'],
+                'alasan' => $validated['alasan'] ?? null,
+                'status' => $status,
+                'tanggal_retur' => $validated['tanggal_retur'] ?? now()->toDateString(),
+                'foto' => $fotoPath,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+
+            $returId = DB::table('retur')->insertGetId($payload);
+
+            if (in_array(strtolower($status), ['diterima', 'disetujui'], true) && $product) {
+                $product->increment('stok', (int) $validated['qty']);
+                \App\Models\StokLog::logChange(
+                    $product->id,
+                    'Retur',
+                    (int) $validated['qty'],
+                    0,
+                    $noRetur,
+                    auth()->id(),
+                    'Retur Penjualan disetujui saat dibuat'
+                );
+            }
+
+            return $returId;
+        });
 
         return response()->json([
-            'message' => 'Tabel retur belum tersedia di database. Data tidak disimpan.',
-        ], 422);
+            'message' => 'Produk retur berhasil ditambahkan.',
+            'data' => ['retur_id' => $id],
+        ], 201);
     }
 
     public function searchProducts(Request $request)
@@ -209,36 +230,71 @@ class ReportLaporanController extends Controller
             'foto' => ['nullable', 'image', 'max:2048'],
         ]);
 
-        $product = null;
-        if (!empty($validated['produk_id'])) {
-            $product = Product::query()->find($validated['produk_id']);
-        }
-        if (!$product && !empty($validated['produk_nama'])) {
-            $product = Product::query()->where('nama', $validated['produk_nama'])->first()
-                    ?? Product::query()->where('nama', 'LIKE', '%' . $validated['produk_nama'] . '%')->first();
-        }
-        $productName = $product?->nama ?? $validated['produk_nama'];
-
-        $payload = [
-            'transaksi_id' => $validated['transaksi_id'] ?? null,
-            'produk_id' => $product?->id,
-            'produk_nama' => $productName,
-            'qty' => (int) $validated['qty'],
-            'alasan' => $validated['alasan'] ?? null,
-            'status' => $validated['status'] ?? 'Dalam Proses',
-            'tanggal_retur' => $validated['tanggal_retur'] ?? now()->toDateString(),
-            'updated_at' => now(),
-        ];
-
-        if ($request->hasFile('foto')) {
-            $oldFoto = DB::table('retur')->where('id', $id)->value('foto');
-            if ($oldFoto) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($oldFoto);
+        DB::transaction(function () use ($request, $validated, $id) {
+            $oldRetur = DB::table('retur')->where('id', $id)->lockForUpdate()->first();
+            if (!$oldRetur) {
+                return;
             }
-            $payload['foto'] = $request->file('foto')->store('retur', 'public');
-        }
 
-        DB::table('retur')->where('id', $id)->update($payload);
+            $product = null;
+            $productId = $validated['produk_id'] ?? $oldRetur->produk_id;
+            if ($productId) {
+                $product = Product::query()->lockForUpdate()->find($productId);
+            }
+            if (!$product && !empty($validated['produk_nama'])) {
+                $product = Product::query()->where('nama', $validated['produk_nama'])->lockForUpdate()->first()
+                        ?? Product::query()->where('nama', 'LIKE', '%' . $validated['produk_nama'] . '%')->lockForUpdate()->first();
+            }
+            $productName = $product?->nama ?? $validated['produk_nama'];
+
+            $newStatus = $validated['status'] ?? $oldRetur->status;
+            $newQty = (int) $validated['qty'];
+            $oldStatusApproved = in_array(strtolower($oldRetur->status), ['diterima', 'disetujui'], true);
+            $newStatusApproved = in_array(strtolower($newStatus), ['diterima', 'disetujui'], true);
+
+            // Update stok berdasarkan perubahan status / qty
+            if ($product) {
+                if ($oldStatusApproved && !$newStatusApproved) {
+                    // Revert: kurangi stok kembali
+                    $product->decrement('stok', $oldRetur->qty);
+                    \App\Models\StokLog::logChange($product->id, 'Retur', 0, $oldRetur->qty, $oldRetur->no_retur ?? ('RT-' . $id), auth()->id(), 'Batal/Ubah persetujuan retur');
+                } elseif (!$oldStatusApproved && $newStatusApproved) {
+                    // Approved: tambah stok
+                    $product->increment('stok', $newQty);
+                    \App\Models\StokLog::logChange($product->id, 'Retur', $newQty, 0, $oldRetur->no_retur ?? ('RT-' . $id), auth()->id(), 'Persetujuan retur disetujui');
+                } elseif ($oldStatusApproved && $newStatusApproved && $oldRetur->qty !== $newQty) {
+                    // Adjustment qty
+                    $diff = $newQty - $oldRetur->qty;
+                    if ($diff > 0) {
+                        $product->increment('stok', $diff);
+                        \App\Models\StokLog::logChange($product->id, 'Retur', $diff, 0, $oldRetur->no_retur ?? ('RT-' . $id), auth()->id(), 'Penyesuaian Qty retur disetujui (+)');
+                    } else {
+                        $product->decrement('stok', abs($diff));
+                        \App\Models\StokLog::logChange($product->id, 'Retur', 0, abs($diff), $oldRetur->no_retur ?? ('RT-' . $id), auth()->id(), 'Penyesuaian Qty retur disetujui (-)');
+                    }
+                }
+            }
+
+            $payload = [
+                'transaksi_id' => $validated['transaksi_id'] ?? null,
+                'produk_id' => $product?->id,
+                'produk_nama' => $productName,
+                'qty' => $newQty,
+                'alasan' => $validated['alasan'] ?? null,
+                'status' => $newStatus,
+                'tanggal_retur' => $validated['tanggal_retur'] ?? now()->toDateString(),
+                'updated_at' => now(),
+            ];
+
+            if ($request->hasFile('foto')) {
+                if (!empty($oldRetur->foto)) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($oldRetur->foto);
+                }
+                $payload['foto'] = $request->file('foto')->store('retur', 'public');
+            }
+
+            DB::table('retur')->where('id', $id)->update($payload);
+        });
 
         return response()->json([
             'message' => 'Produk retur berhasil diperbarui.',
@@ -286,12 +342,26 @@ class ReportLaporanController extends Controller
 
     public function destroyRetur($id)
     {
-        $oldFoto = DB::table('retur')->where('id', $id)->value('foto');
-        if ($oldFoto) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($oldFoto);
-        }
+        DB::transaction(function () use ($id) {
+            $retur = DB::table('retur')->where('id', $id)->lockForUpdate()->first();
+            if (!$retur) {
+                return;
+            }
 
-        DB::table('retur')->where('id', $id)->delete();
+            if (in_array(strtolower($retur->status), ['diterima', 'disetujui'], true) && $retur->produk_id) {
+                $product = Product::query()->lockForUpdate()->find($retur->produk_id);
+                if ($product) {
+                    $product->decrement('stok', $retur->qty);
+                    \App\Models\StokLog::logChange($product->id, 'Retur', 0, $retur->qty, $retur->no_retur ?? ('RT-' . $id), auth()->id(), 'Retur dihapus (stok dikurangi kembali)');
+                }
+            }
+
+            if (!empty($retur->foto)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($retur->foto);
+            }
+
+            DB::table('retur')->where('id', $id)->delete();
+        });
 
         return response()->json([
             'message' => 'Produk retur berhasil dihapus.',
@@ -300,79 +370,88 @@ class ReportLaporanController extends Controller
 
     public function approveRetur($id)
     {
-        $retur = DB::table('retur')->where('id', $id)->first();
-        if (!$retur) {
-            return response()->json(['message' => 'Data retur tidak ditemukan.'], 404);
-        }
-
-        if ($retur->status !== 'Menunggu') {
-            return response()->json(['message' => 'Hanya retur dengan status Menunggu yang dapat disetujui.'], 422);
-        }
-
-        // 1. Update status to Diterima
-        DB::table('retur')->where('id', $id)->update([
-            'status' => 'Diterima',
-            'updated_at' => now(),
-        ]);
-
-        // 2. Increment stock if produk_id is set
-        $produkNama = $retur->produk_nama;
-        if ($retur->produk_id) {
-            $product = Product::find($retur->produk_id);
-            if ($product) {
-                $product->increment('stok', $retur->qty);
-                $produkNama = $product->nama;
-                \App\Models\StokLog::logChange($product->id, 'Retur', $retur->qty, 0, $retur->no_retur ?? ('RT-' . $retur->id), auth()->id() ?? null, 'Retur Penjualan disetujui');
+        return DB::transaction(function () use ($id) {
+            $retur = DB::table('retur')->where('id', $id)->lockForUpdate()->first();
+            if (!$retur) {
+                return response()->json(['message' => 'Data retur tidak ditemukan.'], 404);
             }
-        }
 
-        // 3. Save audit log
-        DB::table('audit_logs')->insert([
-            'model_type' => 'Retur',
-            'model_id' => $id,
-            'user_id' => auth()->id(),
-            'action' => 'Approve',
-            'details' => "Status retur #{$id} disetujui (Diterima) oleh " . auth()->user()->name . ". Stok produk '{$produkNama}' bertambah sebanyak {$retur->qty}.",
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+            if (in_array(strtolower($retur->status), ['diterima', 'disetujui'], true)) {
+                return response()->json(['message' => 'Retur ini sudah disetujui sebelumnya.'], 422);
+            }
 
-        return response()->json([
-            'message' => 'Retur berhasil disetujui, stok produk telah disesuaikan.',
-        ]);
+            // 1. Update status to Diterima
+            DB::table('retur')->where('id', $id)->update([
+                'status' => 'Diterima',
+                'updated_at' => now(),
+            ]);
+
+            // 2. Increment stock if produk_id is set
+            $produkNama = $retur->produk_nama;
+            if ($retur->produk_id) {
+                $product = Product::query()->lockForUpdate()->find($retur->produk_id);
+                if ($product) {
+                    $product->increment('stok', $retur->qty);
+                    $produkNama = $product->nama;
+                    \App\Models\StokLog::logChange($product->id, 'Retur', $retur->qty, 0, $retur->no_retur ?? ('RT-' . $retur->id), auth()->id() ?? null, 'Retur Penjualan disetujui');
+                }
+            }
+
+            // 3. Save audit log
+            DB::table('audit_logs')->insert([
+                'model_type' => 'Retur',
+                'model_id' => $id,
+                'user_id' => auth()->id(),
+                'action' => 'Approve',
+                'details' => "Status retur #{$id} disetujui (Diterima) oleh " . (auth()->user()?->name ?? 'System') . ". Stok produk '{$produkNama}' bertambah sebanyak {$retur->qty}.",
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            return response()->json([
+                'message' => 'Retur berhasil disetujui, stok produk telah disesuaikan.',
+            ]);
+        });
     }
 
     public function rejectRetur($id)
     {
-        $retur = DB::table('retur')->where('id', $id)->first();
-        if (!$retur) {
-            return response()->json(['message' => 'Data retur tidak ditemukan.'], 404);
-        }
+        return DB::transaction(function () use ($id) {
+            $retur = DB::table('retur')->where('id', $id)->lockForUpdate()->first();
+            if (!$retur) {
+                return response()->json(['message' => 'Data retur tidak ditemukan.'], 404);
+            }
 
-        if ($retur->status !== 'Menunggu') {
-            return response()->json(['message' => 'Hanya retur dengan status Menunggu yang dapat ditolak.'], 422);
-        }
+            // Jika sebelumnya disetujui/diterima, kurangi stok kembali
+            if (in_array(strtolower($retur->status), ['diterima', 'disetujui'], true) && $retur->produk_id) {
+                $product = Product::query()->lockForUpdate()->find($retur->produk_id);
+                if ($product) {
+                    $product->decrement('stok', $retur->qty);
+                    \App\Models\StokLog::logChange($product->id, 'Retur', 0, $retur->qty, $retur->no_retur ?? ('RT-' . $id), auth()->id(), 'Retur ditolak setelah disetujui (stok dikurangi kembali)');
+                }
+            }
 
-        // 1. Update status to Ditolak
-        DB::table('retur')->where('id', $id)->update([
-            'status' => 'Ditolak',
-            'updated_at' => now(),
-        ]);
+            // 1. Update status to Ditolak
+            DB::table('retur')->where('id', $id)->update([
+                'status' => 'Ditolak',
+                'updated_at' => now(),
+            ]);
 
-        // 2. Save audit log
-        DB::table('audit_logs')->insert([
-            'model_type' => 'Retur',
-            'model_id' => $id,
-            'user_id' => auth()->id(),
-            'action' => 'Reject',
-            'details' => "Status retur #{$id} ditolak (Ditolak) oleh " . auth()->user()->name . ". Stok tidak mengalami perubahan.",
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+            // 2. Save audit log
+            DB::table('audit_logs')->insert([
+                'model_type' => 'Retur',
+                'model_id' => $id,
+                'user_id' => auth()->id(),
+                'action' => 'Reject',
+                'details' => "Status retur #{$id} ditolak oleh " . (auth()->user()?->name ?? 'System') . ".",
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
-        return response()->json([
-            'message' => 'Retur berhasil ditolak.',
-        ]);
+            return response()->json([
+                'message' => 'Retur berhasil ditolak.',
+            ]);
+        });
     }
 
     public function returStats(Request $request)

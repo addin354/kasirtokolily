@@ -2,6 +2,7 @@
     $navMobile = $navMobile ?? false;
     $navSidebar = $navSidebar ?? false;
     $unreadReportsCount = \App\Models\Report::where('status', \App\Models\Report::STATUS_TERKIRIM)->count();
+    $lowStockCount = \App\Models\Product::where('is_active', true)->whereColumn('stok', '<=', 'stok_minimum')->count();
 @endphp
 @auth
     @if (auth()->user()->isOwner())
@@ -15,8 +16,11 @@
             </a>
         </li>
         <li class="nav-item">
-            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.stok') ? 'active' : '' }}" href="{{ route('owner.stok') }}">
-                <i class="bi bi-boxes me-2"></i> Monitoring Stok
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.stok') ? 'active' : '' }} d-flex justify-content-between align-items-center" href="{{ route('owner.stok') }}">
+                <span><i class="bi bi-boxes me-2"></i> Monitoring Stok</span>
+                @if($lowStockCount > 0)
+                    <span class="badge bg-warning text-dark rounded-pill" title="{{ $lowStockCount }} produk perlu restok">{{ $lowStockCount }}</span>
+                @endif
             </a>
         </li>
         <li class="nav-item">
@@ -30,8 +34,11 @@
             </a>
         </li>
         <li class="nav-item">
-            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('stok-masuk.*') ? 'active' : '' }}" href="{{ route('stok-masuk.index') }}">
-                <i class="bi bi-archive me-2"></i> Inventory
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('stok-masuk.*') ? 'active' : '' }} d-flex justify-content-between align-items-center" href="{{ route('stok-masuk.index') }}">
+                <span><i class="bi bi-archive me-2"></i> Inventory</span>
+                @if($lowStockCount > 0)
+                    <span class="badge bg-warning text-dark rounded-pill" title="{{ $lowStockCount }} produk perlu restok">{{ $lowStockCount }}</span>
+                @endif
             </a>
         </li>
         <li class="nav-item">
@@ -100,8 +107,11 @@
             <span class="nav-link disabled fw-semibold text-uppercase px-0 py-1 {{ $navSidebar ? 'text-muted' : 'text-white-50' }}" style="font-size: 0.7rem; letter-spacing: 0.05em;">STOK & TRANSAKSI</span>
         </li>
         <li class="nav-item">
-            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('stok-masuk.*') ? 'active' : '' }}" href="{{ route('stok-masuk.index') }}">
-                <i class="bi bi-archive me-2"></i> Inventory
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('stok-masuk.*') ? 'active' : '' }} d-flex justify-content-between align-items-center" href="{{ route('stok-masuk.index') }}">
+                <span><i class="bi bi-archive me-2"></i> Inventory</span>
+                @if($lowStockCount > 0)
+                    <span class="badge bg-warning text-dark rounded-pill" title="{{ $lowStockCount }} produk perlu restok">{{ $lowStockCount }}</span>
+                @endif
             </a>
         </li>
         <li class="nav-item">
@@ -115,8 +125,11 @@
             </a>
         </li>
         <li class="nav-item">
-            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.stok') ? 'active' : '' }}" href="{{ route('owner.stok') }}">
-                <i class="bi bi-boxes me-2"></i> Monitoring Stok
+            <a @if($navMobile) data-bs-dismiss="offcanvas" @endif class="nav-link {{ request()->routeIs('owner.stok') ? 'active' : '' }} d-flex justify-content-between align-items-center" href="{{ route('owner.stok') }}">
+                <span><i class="bi bi-boxes me-2"></i> Monitoring Stok</span>
+                @if($lowStockCount > 0)
+                    <span class="badge bg-warning text-dark rounded-pill" title="{{ $lowStockCount }} produk perlu restok">{{ $lowStockCount }}</span>
+                @endif
             </a>
         </li>
 

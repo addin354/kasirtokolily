@@ -101,7 +101,7 @@ class StokMasukController extends Controller
         ]);
 
         DB::transaction(function () use ($validated) {
-            StokMasuk::create([
+            $sm = StokMasuk::create([
                 'produk_id' => $validated['produk_id'],
                 'supplier_id' => $validated['supplier_id'],
                 'jumlah' => $validated['jumlah'],
@@ -116,6 +116,15 @@ class StokMasukController extends Controller
                 $product->update([
                     'harga_beli' => $validated['harga_beli'],
                 ]);
+                \App\Models\StokLog::logChange(
+                    $product->id,
+                    'Stok Masuk',
+                    (int) $validated['jumlah'],
+                    0,
+                    'SM-' . $sm->id,
+                    auth()->id(),
+                    $validated['keterangan'] ?? 'Stok Masuk Supplier'
+                );
             }
         });
 

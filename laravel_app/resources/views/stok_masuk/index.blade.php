@@ -34,6 +34,34 @@
         <div class="alert alert-warning">Belum ada supplier. <a href="{{ route('suppliers.create') }}">Tambah supplier</a> sebelum mencatat stok masuk.</div>
     @endif
 
+    <!-- Multi-Tab Menu -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white p-0 border-bottom">
+            <ul class="nav nav-tabs border-0" id="inventoryTabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ route('stok-masuk.index', ['tab' => 'masuk']) }}">
+                        <i class="bi bi-box-arrow-in-down me-1"></i> A. Input Stok Masuk
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('stok-masuk.index', ['tab' => 'opname']) }}">
+                        <i class="bi bi-check2-square me-1"></i> B. Stock Opname
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('stok-masuk.index', ['tab' => 'penyesuaian']) }}">
+                        <i class="bi bi-sliders me-1"></i> C. Penyesuaian Stok
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('stok-masuk.index', ['tab' => 'riwayat']) }}">
+                        <i class="bi bi-clock-history me-1"></i> D. Riwayat Perubahan (Kartu Stok)
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
     <div class="card shadow-sm mb-4">
         <div class="card-header fw-semibold">Input stok masuk (restok)</div>
         <div class="card-body">

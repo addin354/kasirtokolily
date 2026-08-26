@@ -229,8 +229,8 @@ class PembelianController extends Controller
                         'subtotal' => $subtotal,
                     ]);
 
-                    // Update stok produk
-                    $product = Product::findOrFail($item['produk_id']);
+                    // Update stok produk dengan pessimistic lock
+                    $product = Product::lockForUpdate()->findOrFail($item['produk_id']);
                     $product->increment('stok', $item['qty']);
 
                     // Update harga modal produk ke harga beli terakhir
