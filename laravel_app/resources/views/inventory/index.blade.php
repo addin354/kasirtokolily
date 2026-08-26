@@ -245,8 +245,11 @@
                                                 <td class="ps-3">{{ $adj->created_at->format('d/m/Y') }}</td>
                                                 <td class="fw-semibold text-dark">{{ $adj->product?->nama ?? '—' }}</td>
                                                 <td>
-                                                    <span class="badge @if($adj->jenis === 'Tambah') bg-success @else bg-danger @endif">
-                                                        {{ $adj->jenis }}
+                                                    @php
+                                                        $isTambah = in_array(strtolower(trim($adj->jenis)), ['tambah', 'masuk', 'plus', '+']);
+                                                    @endphp
+                                                    <span class="badge {{ $isTambah ? 'bg-success' : 'bg-danger' }}">
+                                                        {{ ucfirst($adj->jenis) }}
                                                     </span>
                                                 </td>
                                                 <td class="text-end fw-bold">{{ $adj->jumlah }}</td>

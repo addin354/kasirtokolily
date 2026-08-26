@@ -114,7 +114,7 @@ class InventoryController extends Controller
     {
         $validated = $request->validate([
             'produk_id' => ['required', 'integer', 'exists:produks,id'],
-            'jenis' => ['required', 'string', 'in:Tambah,Kurang'],
+            'jenis' => ['required', 'string', 'in:Tambah,Kurang,tambah,kurang'],
             'jumlah' => ['required', 'integer', 'min:1'],
             'alasan' => ['required', 'string', 'max:255'],
         ]);
@@ -123,7 +123,9 @@ class InventoryController extends Controller
             $product = Product::lockForUpdate()->find($validated['produk_id']);
             $jumlah = (int) $validated['jumlah'];
 
-            if ($validated['jenis'] === 'Tambah') {
+            $isTambah = in_array(strtolower(trim($validated['jenis'])), ['tambah', 'masuk', 'plus', '+']);
+
+            if ($isTambah) {
                 $product->increment('stok', $jumlah);
                 $masuk = $jumlah;
                 $keluar = 0;

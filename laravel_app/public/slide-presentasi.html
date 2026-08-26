@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide Presentasi Skripsi - Antarmuka Kasir Toko Lily</title>
+    <!-- Google Fonts & Bootstrap Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0f172a;
+            color: #1e293b;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Top Action Bar for Presentation Controls */
+        .controls-top-bar {
+            width: 1333px;
+            max-width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            color: #f8fafc;
+        }
+
+        .controls-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .controls-brand span {
+            color: #38bdf8;
+        }
+
+        .btn-group-pres {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-pres {
+            background: #1e293b;
+            color: #f8fafc;
+            border: 1px solid #334155;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-pres:hover {
+            background: #0284c7;
+            border-color: #38bdf8;
+        }
+
+        /* Slide Deck Container (16:9 ratio) */
+        .slide-deck {
+            width: 1333px;
+            height: 750px;
+            background: #ffffff;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Individual Slide View */
+        .slide-page {
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: #ffffff;
+        }
+
+        .slide-page.active {
+            display: flex;
+        }
+
+        /* Top Accent Decorative Bars */
+        .top-accent-bars {
+            position: absolute;
+            top: 24px;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 10;
+        }
+
+        .accent-line-1 {
+            width: 320px;
+            height: 5px;
+            background: #1e3a8a; /* Navy Blue */
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+        }
+
+        .accent-line-2 {
+            width: 260px;
+            height: 5px;
+            background: #059669; /* Emerald Green */
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+            align-self: flex-end;
+        }
+
+        /* Slide Title */
+        .slide-header {
+            padding-top: 36px;
+            text-align: center;
+            position: relative;
+            z-index: 5;
+        }
+
+        .slide-title {
+            font-family: 'Merriweather', serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: #1e293b;
+            letter-spacing: -0.5px;
+        }
+
+        /* Slide Body Layout */
+        .slide-body {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 40px;
+        }
+
+        /* Callout Cards */
+        .callout-box {
+            position: absolute;
+            width: 320px;
+            background: #ffffff;
+            border: 2.5px solid #3b82f6;
+            border-radius: 16px;
+            padding: 20px 22px;
+            box-shadow: 0 12px 25px -5px rgba(59, 130, 246, 0.18), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            z-index: 20;
+            transition: all 0.3s ease;
+        }
+
+        .callout-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 35px -10px rgba(59, 130, 246, 0.3);
+        }
+
+        .callout-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #1d4ed8;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .callout-title span {
+            display: block;
+            font-size: 17px;
+            font-weight: 600;
+            color: #2563eb;
+        }
+
+        .callout-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .callout-list li {
+            position: relative;
+            padding-left: 16px;
+            font-size: 13.5px;
+            line-height: 1.55;
+            color: #334155;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .callout-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .callout-list li::before {
+            content: "-";
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+
+        .callout-left {
+            left: 50px;
+            top: 135px;
+        }
+
+        .callout-right {
+            right: 50px;
+            top: 105px;
+        }
+
+        /* Vector Line Pointers SVG */
+        .svg-connectors {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 15;
+        }
+
+        /* Laptop Container */
+        .laptop-container {
+            position: relative;
+            width: 660px;
+            margin-top: 10px;
+            z-index: 10;
+        }
+
+        .laptop-screen {
+            background: #0f172a;
+            border-radius: 20px 20px 0 0;
+            padding: 12px 12px 0 12px;
+            box-shadow: inset 0 0 0 2px #334155, 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        .laptop-camera {
+            width: 60px;
+            height: 12px;
+            background: #000;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-bottom-left-radius: 6px;
+            border-bottom-right-radius: 6px;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .camera-lens {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #1e293b;
+        }
+
+        .screen-display {
+            background: #f1f5f9;
+            height: 380px;
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .laptop-base {
+            height: 18px;
+            background: linear-gradient(to bottom, #cbd5e1, #94a3b8);
+            border-radius: 0 0 16px 16px;
+            position: relative;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+        }
+
+        .laptop-notch-indent {
+            width: 90px;
+            height: 6px;
+            background: #64748b;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+
+        .laptop-bottom-shadow {
+            height: 8px;
+            background: linear-gradient(to bottom, #475569, #1e293b);
+            margin: 0 50px;
+            border-radius: 0 0 8px 8px;
+        }
+
+        /* Mock UI Windows Inside Laptop Screen */
+        .window-dashboard {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 60px;
+            bottom: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            display: flex;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .mock-sidebar {
+            width: 140px;
+            background: #ffffff;
+            border-right: 1px solid #e2e8f0;
+            padding: 12px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .mock-brand {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 800;
+            color: #0284c7;
+            padding: 4px 6px;
+            margin-bottom: 8px;
+        }
+
+        .mock-brand-icon {
+            width: 18px;
+            height: 18px;
+            background: #0284c7;
+            border-radius: 4px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .mock-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10.5px;
+            font-weight: 600;
+            padding: 6px 8px;
+            border-radius: 6px;
+            color: #64748b;
+        }
+
+        .mock-nav-item.active {
+            background: #e0f2fe;
+            color: #0284c7;
+            font-weight: 700;
+        }
+
+        .mock-main {
+            flex: 1;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #f8fafc;
+        }
+
+        .mock-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .mock-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .mock-user {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #475569;
+            background: #ffffff;
+            padding: 3px 8px;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .mock-cards-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .mock-card {
+            border-radius: 8px;
+            padding: 12px;
+            color: #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-blue {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+        }
+
+        .card-amber {
+            background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
+        }
+
+        .card-emerald {
+            background: linear-gradient(135deg, #047857 0%, #10b981 100%);
+        }
+
+        .card-purple {
+            background: linear-gradient(135deg, #4338ca 0%, #6366f1 100%);
+        }
+
+        .card-val {
+            font-size: 24px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-top: 4px;
+        }
+
+        .card-lbl {
+            font-size: 9.5px;
+            font-weight: 600;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .card-icon {
+            font-size: 22px;
+            opacity: 0.85;
+        }
+
+        .mock-summary-box {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .summary-header {
+            font-size: 11px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+
+        .summary-list {
+            font-size: 10px;
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        .summary-list div {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot-warning {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #f59e0b;
+        }
+
+        .dot-success {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+
+        .window-kasir {
+            position: absolute;
+            top: 90px;
+            left: 120px;
+            right: 12px;
+            bottom: 12px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0,0,0,0.08);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .kasir-header {
+            background: #ffffff;
+            padding: 8px 12px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .kasir-title-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hamburger-icon {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .kasir-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .kasir-toolbar {
+            padding: 8px 12px;
+            display: flex;
+            gap: 8px;
+            justify-content: space-between;
+            align-items: center;
+            background: #fafafa;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .mock-search {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 9.5px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            width: 140px;
+        }
+
+        .mock-btn-filter {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 9.5px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .mock-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9.5px;
+        }
+
+        .mock-table th {
+            background: #f8fafc;
+            color: #475569;
+            font-weight: 700;
+            padding: 6px 8px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .mock-table td {
+            padding: 6px 8px;
+            color: #334155;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .mock-table tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .badge-pj {
+            font-weight: 700;
+            color: #0284c7;
+        }
+
+        .badge-restok {
+            background: #fef3c7;
+            color: #d97706;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .action-eye {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #e0f2fe;
+            color: #0284c7;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+        }
+
+        .mock-pagination {
+            margin-top: auto;
+            padding: 6px 12px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 4px;
+            font-size: 9px;
+            color: #64748b;
+        }
+
+        .page-num {
+            width: 14px;
+            height: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 2px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .page-num.active {
+            background: #0284c7;
+            color: #fff;
+            border-color: #0284c7;
+            font-weight: 700;
+        }
+
+        .slide-footer-bar {
+            height: 6px;
+            width: 100%;
+            background: linear-gradient(to right, #1e3a8a 70%, #059669 100%);
+            margin-top: auto;
+        }
+
+        .pres-controls {
+            position: absolute;
+            bottom: 14px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: #64748b;
+            font-size: 14px;
+            z-index: 30;
+        }
+
+        .pres-controls span {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Print Media Queries for PDF Export */
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+            }
+            .controls-top-bar {
+                display: none;
+            }
+            .slide-deck {
+                box-shadow: none;
+                border-radius: 0;
+                width: 100vw;
+                height: 100vh;
+                page-break-after: always;
+            }
+            .slide-page {
+                display: flex !important;
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Action Bar for Presentation Navigation -->
+    <div class="controls-top-bar">
+        <div class="controls-brand">
+            <i class="bi bi-display"></i> Presentation Deck: <span>Kasir Toko Lily Sembako</span>
+        </div>
+        <div class="btn-group-pres">
+            <button class="btn-pres" onclick="prevSlide()"><i class="bi bi-chevron-left"></i> Prev</button>
+            <button class="btn-pres" onclick="nextSlide()">Next <i class="bi bi-chevron-right"></i></button>
+            <button class="btn-pres" onclick="window.print()"><i class="bi bi-printer"></i> Cetak / Export PDF</button>
+        </div>
+    </div>
+
+    <!-- 16:9 Widescreen Slide Deck -->
+    <div class="slide-deck">
+
+        <!-- ==========================================================================
+             SLIDE 1: Implementasi Antarmuka Operasional Utama (Dashboard & Kasir)
+             ========================================================================== -->
+        <div class="slide-page active" id="slide-1">
+            <div class="top-accent-bars">
+                <div class="accent-line-1"></div>
+                <div class="accent-line-2"></div>
+            </div>
+
+            <div class="slide-header">
+                <h1 class="slide-title">Implementasi: Antarmuka Operasional Utama</h1>
+            </div>
+
+            <div class="slide-body">
+                <!-- SVG Line Connectors -->
+                <svg class="svg-connectors" viewBox="0 0 1333 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 230 200 H 280 V 225 H 410" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M 1000 370 H 1080 V 500 H 940" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+
+                <!-- Left Callout Box -->
+                <div class="callout-box callout-left">
+                    <div class="callout-title">Halaman<br>Dashboard</div>
+                    <ul class="callout-list">
+                        <li>Menyajikan Overview instan: Total Barang Tersedia, Total Transaksi Hari Ini.</li>
+                        <li>Menampilkan peringatan (alert) untuk stok yang mulai menipis secara otomatis.</li>
+                    </ul>
+                </div>
+
+                <!-- Center Laptop Mockup -->
+                <div class="laptop-container">
+                    <div class="laptop-screen">
+                        <div class="laptop-camera">
+                            <div class="camera-lens"></div>
+                        </div>
+
+                        <div class="screen-display">
+                            <!-- Back Window: Dashboard -->
+                            <div class="window-dashboard">
+                                <div class="mock-sidebar">
+                                    <div class="mock-brand">
+                                        <div class="mock-brand-icon"><i class="bi bi-shop"></i></div>
+                                        <span>Toko Lily</span>
+                                    </div>
+                                    <div class="mock-nav-item active"><i class="bi bi-house-door"></i> Dashboard</div>
+                                    <div class="mock-nav-item"><i class="bi bi-cart"></i> Transaksi</div>
+                                    <div class="mock-nav-item"><i class="bi bi-box-seam"></i> Data Master</div>
+                                    <div class="mock-nav-item"><i class="bi bi-boxes"></i> Stok Barang</div>
+                                    <div class="mock-nav-item"><i class="bi bi-file-earmark-bar-graph"></i> Laporan</div>
+                                    <div class="mock-nav-item"><i class="bi bi-gear"></i> Pengaturan</div>
+                                    <div class="mock-nav-item" style="margin-top: auto; color: #ef4444;"><i class="bi bi-box-arrow-right"></i> Logout</div>
+                                </div>
+
+                                <div class="mock-main">
+                                    <div class="mock-topbar">
+                                        <div class="mock-title">Dashboard</div>
+                                        <div class="mock-user"><i class="bi bi-person-circle"></i> Admin</div>
+                                    </div>
+
+                                    <div class="mock-cards-row">
+                                        <div class="mock-card card-blue">
+                                            <div>
+                                                <div class="card-lbl">Total Barang</div>
+                                                <div class="card-val">120</div>
+                                            </div>
+                                            <div class="card-icon"><i class="bi bi-box-seam-fill"></i></div>
+                                        </div>
+                                        <div class="mock-card card-amber">
+                                            <div>
+                                                <div class="card-lbl">Total Transaksi Hari Ini</div>
+                                                <div class="card-val">15</div>
+                                            </div>
+                                            <div class="card-icon"><i class="bi bi-cart-fill"></i></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mock-summary-box">
+                                        <div class="summary-header">Ringkasan</div>
+                                        <div class="summary-list">
+                                            <div><span class="dot-warning"></span> Stok Menipis (3 Barang Perlu Restok)</div>
+                                            <div><span class="dot-success"></span> Transaksi Penjualan Aktif Hari Ini</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Front Window: Kasir POS / Riwayat Transaksi -->
+                            <div class="window-kasir">
+                                <div class="kasir-header">
+                                    <div class="kasir-title-group">
+                                        <i class="bi bi-list hamburger-icon"></i>
+                                        <span class="kasir-title">Riwayat Transaksi</span>
+                                    </div>
+                                    <div class="mock-user"><i class="bi bi-person-circle"></i> Admin</div>
+                                </div>
+
+                                <div class="kasir-toolbar">
+                                    <div class="mock-nav-item active" style="font-size: 9px; padding: 3px 6px;">
+                                        <i class="bi bi-cart-check"></i> Transaksi
+                                    </div>
+                                    <div class="mock-search"><i class="bi bi-search"></i> Cari...</div>
+                                    <div class="mock-btn-filter">Filter</div>
+                                </div>
+
+                                <table class="mock-table">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>No. Penjualan</th>
+                                            <th>Tanggal</th>
+                                            <th>Pelanggan</th>
+                                            <th>Total</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td class="badge-pj">PJ-0001</td>
+                                            <td>01/05/2026</td>
+                                            <td>Pelanggan A</td>
+                                            <td>150.000</td>
+                                            <td><span class="action-eye"><i class="bi bi-eye"></i></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td class="badge-pj">PJ-0002</td>
+                                            <td>02/05/2026</td>
+                                            <td>Pelanggan B</td>
+                                            <td>250.000</td>
+                                            <td><span class="action-eye"><i class="bi bi-eye"></i></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>3</td>
+                                            <td class="badge-pj">PJ-0003</td>
+                                            <td>03/05/2026</td>
+                                            <td>Pelanggan C</td>
+                                            <td>175.600</td>
+                                            <td><span class="action-eye"><i class="bi bi-eye"></i></span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div class="mock-pagination">
+                                    <span>&lt;</span>
+                                    <span class="page-num active">1</span>
+                                    <span class="page-num">2</span>
+                                    <span class="page-num">3</span>
+                                    <span>&gt;</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="laptop-base"><div class="laptop-notch-indent"></div></div>
+                    <div class="laptop-bottom-shadow"></div>
+                </div>
+
+                <!-- Right Callout Box -->
+                <div class="callout-box callout-right">
+                    <div class="callout-title">Modul Kasir<br><span>(Point of Sale)</span></div>
+                    <ul class="callout-list">
+                        <li>Antarmuka User-Friendly dirancang untuk kecepatan input.</li>
+                        <li>Kalkulasi subtotal, diskon, dan kembalian seketika.</li>
+                        <li>Terintegrasi langsung dengan fitur cetak struk penjualan digital.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pres-controls">
+                <i class="bi bi-arrow-left" onclick="prevSlide()"></i>
+                <i class="bi bi-arrow-right" onclick="nextSlide()"></i>
+                <span>Slide 1 dari 3</span>
+            </div>
+            <div class="slide-footer-bar"></div>
+        </div>
+
+
+        <!-- ==========================================================================
+             SLIDE 2: Rekomendasi Restok Cerdas & Smart Inventory
+             ========================================================================== -->
+        <div class="slide-page" id="slide-2">
+            <div class="top-accent-bars">
+                <div class="accent-line-1"></div>
+                <div class="accent-line-2"></div>
+            </div>
+
+            <div class="slide-header">
+                <h1 class="slide-title">Implementasi: Smart Reorder & Management Stok</h1>
+            </div>
+
+            <div class="slide-body">
+                <svg class="svg-connectors" viewBox="0 0 1333 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 230 200 H 280 V 225 H 410" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M 1000 370 H 1080 V 500 H 940" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+
+                <div class="callout-box callout-left">
+                    <div class="callout-title">Rekomendasi Restok<br><span>(Smart Reorder)</span></div>
+                    <ul class="callout-list">
+                        <li>Kalkulasi otomatis kebutuhan stok berdasarkan Sales Velocity (30 Hari).</li>
+                        <li>Fitur 1-Click Tambah Pembelian untuk pembuatan order supplier secara instan.</li>
+                    </ul>
+                </div>
+
+                <div class="laptop-container">
+                    <div class="laptop-screen">
+                        <div class="laptop-camera"><div class="camera-lens"></div></div>
+
+                        <div class="screen-display">
+                            <div class="window-dashboard">
+                                <div class="mock-sidebar">
+                                    <div class="mock-brand"><div class="mock-brand-icon"><i class="bi bi-shop"></i></div><span>Toko Lily</span></div>
+                                    <div class="mock-nav-item"><i class="bi bi-house-door"></i> Dashboard</div>
+                                    <div class="mock-nav-item"><i class="bi bi-cart"></i> Transaksi</div>
+                                    <div class="mock-nav-item active"><i class="bi bi-boxes"></i> Stok Barang</div>
+                                    <div class="mock-nav-item"><i class="bi bi-file-earmark-bar-graph"></i> Laporan</div>
+                                </div>
+
+                                <div class="mock-main">
+                                    <div class="mock-topbar">
+                                        <div class="mock-title">Rekomendasi Restok</div>
+                                        <div class="mock-user"><i class="bi bi-person-circle"></i> Owner</div>
+                                    </div>
+                                    <div class="mock-cards-row">
+                                        <div class="mock-card card-amber">
+                                            <div>
+                                                <div class="card-lbl">Perlu Restok</div>
+                                                <div class="card-val">5 Produk</div>
+                                            </div>
+                                            <div class="card-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+                                        </div>
+                                        <div class="mock-card card-emerald">
+                                            <div>
+                                                <div class="card-lbl">Stok Aman</div>
+                                                <div class="card-val">115 Produk</div>
+                                            </div>
+                                            <div class="card-icon"><i class="bi bi-shield-check"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="window-kasir">
+                                <div class="kasir-header">
+                                    <span class="kasir-title"><i class="bi bi-lightning-charge-fill text-warning"></i> Daftar Barang Restok Otomatis</span>
+                                </div>
+                                <table class="mock-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Produk</th>
+                                            <th>Sisa Stok</th>
+                                            <th>Velocity 30H</th>
+                                            <th>Saran Restok</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><b>Beras SPHP 5kg</b></td>
+                                            <td><span class="badge-restok">3 Sak</span></td>
+                                            <td>12 Sak / Hari</td>
+                                            <td>+50 Sak</td>
+                                            <td><span class="action-eye" style="background:#dcfce7; color:#15803d;"><i class="bi bi-plus-lg"></i></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Minyak Goreng 1L</b></td>
+                                            <td><span class="badge-restok">5 Pcs</span></td>
+                                            <td>18 Pcs / Hari</td>
+                                            <td>+60 Pcs</td>
+                                            <td><span class="action-eye" style="background:#dcfce7; color:#15803d;"><i class="bi bi-plus-lg"></i></span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>Gula Pasir 1kg</b></td>
+                                            <td><span class="badge-restok">2 Pcs</span></td>
+                                            <td>15 Pcs / Hari</td>
+                                            <td>+40 Pcs</td>
+                                            <td><span class="action-eye" style="background:#dcfce7; color:#15803d;"><i class="bi bi-plus-lg"></i></span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="laptop-base"><div class="laptop-notch-indent"></div></div>
+                    <div class="laptop-bottom-shadow"></div>
+                </div>
+
+                <div class="callout-box callout-right">
+                    <div class="callout-title">Manajemen Stok<br><span>&amp; Audit Opname</span></div>
+                    <ul class="callout-list">
+                        <li>Fitur Audit Fisik Stock Opname & Penyesuaian Stok.</li>
+                        <li>Audit log pencatatan riwayat perubahan stok terdeteksi real-time.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pres-controls">
+                <i class="bi bi-arrow-left" onclick="prevSlide()"></i>
+                <i class="bi bi-arrow-right" onclick="nextSlide()"></i>
+                <span>Slide 2 dari 3</span>
+            </div>
+            <div class="slide-footer-bar"></div>
+        </div>
+
+
+        <!-- ==========================================================================
+             SLIDE 3: Laporan Finansial & Analisis Laba Rugi
+             ========================================================================== -->
+        <div class="slide-page" id="slide-3">
+            <div class="top-accent-bars">
+                <div class="accent-line-1"></div>
+                <div class="accent-line-2"></div>
+            </div>
+
+            <div class="slide-header">
+                <h1 class="slide-title">Implementasi: Laporan Finansial & Laba Rugi</h1>
+            </div>
+
+            <div class="slide-body">
+                <svg class="svg-connectors" viewBox="0 0 1333 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 230 200 H 280 V 225 H 410" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M 1000 370 H 1080 V 500 H 940" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+
+                <div class="callout-box callout-left">
+                    <div class="callout-title">Laporan Laba Rugi<br><span>(Financial Analytics)</span></div>
+                    <ul class="callout-list">
+                        <li>Menampilkan Laba Kotor &amp; Laba Bersih transparan: (Harga Jual − Harga Beli) × Qty.</li>
+                        <li>Monitoring real-time saldo kas toko &amp; rincian pengeluaran operasional.</li>
+                    </ul>
+                </div>
+
+                <div class="laptop-container">
+                    <div class="laptop-screen">
+                        <div class="laptop-camera"><div class="camera-lens"></div></div>
+
+                        <div class="screen-display">
+                            <div class="window-dashboard">
+                                <div class="mock-sidebar">
+                                    <div class="mock-brand"><div class="mock-brand-icon"><i class="bi bi-shop"></i></div><span>Toko Lily</span></div>
+                                    <div class="mock-nav-item"><i class="bi bi-house-door"></i> Dashboard</div>
+                                    <div class="mock-nav-item active"><i class="bi bi-file-earmark-bar-graph"></i> Laporan</div>
+                                </div>
+
+                                <div class="mock-main">
+                                    <div class="mock-topbar">
+                                        <div class="mock-title">Laporan Finansial</div>
+                                        <div class="mock-user"><i class="bi bi-person-circle"></i> Owner</div>
+                                    </div>
+                                    <div class="mock-cards-row">
+                                        <div class="mock-card card-purple">
+                                            <div>
+                                                <div class="card-lbl">Pendapatan Bulan Ini</div>
+                                                <div class="card-val">Rp 48.500k</div>
+                                            </div>
+                                            <div class="card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+                                        </div>
+                                        <div class="mock-card card-emerald">
+                                            <div>
+                                                <div class="card-lbl">Laba Bersih Toko</div>
+                                                <div class="card-val">Rp 8.750k</div>
+                                            </div>
+                                            <div class="card-icon"><i class="bi bi-cash-stack"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="window-kasir">
+                                <div class="kasir-header">
+                                    <span class="kasir-title"><i class="bi bi-file-earmark-pdf-fill text-danger"></i> Summary Analytics Laba Rugi</span>
+                                </div>
+                                <table class="mock-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Periode</th>
+                                            <th>Omset Penjualan</th>
+                                            <th>Total HPP</th>
+                                            <th>Laba Bersih</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><b>Mei 2026</b></td>
+                                            <td>Rp 48.500.000</td>
+                                            <td>Rp 39.750.000</td>
+                                            <td style="color:#15803d; font-weight:800;">Rp 8.750.000</td>
+                                            <td><span class="badge-restok" style="background:#dcfce7; color:#15803d;">Untung</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>April 2026</b></td>
+                                            <td>Rp 42.100.000</td>
+                                            <td>Rp 34.800.000</td>
+                                            <td style="color:#15803d; font-weight:800;">Rp 7.300.000</td>
+                                            <td><span class="badge-restok" style="background:#dcfce7; color:#15803d;">Untung</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="laptop-base"><div class="laptop-notch-indent"></div></div>
+                    <div class="laptop-bottom-shadow"></div>
+                </div>
+
+                <div class="callout-box callout-right">
+                    <div class="callout-title">Ekspor &amp; Cetak<br><span>(PDF / Excel)</span></div>
+                    <ul class="callout-list">
+                        <li>Dukungan ekspor resmi laporan finansial &amp; penjualan ke format PDF dan Excel.</li>
+                        <li>Dilengkapi Naskah Panduan Demo Sidang Skripsi siap cetak.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pres-controls">
+                <i class="bi bi-arrow-left" onclick="prevSlide()"></i>
+                <i class="bi bi-arrow-right" onclick="nextSlide()"></i>
+                <span>Slide 3 dari 3</span>
+            </div>
+            <div class="slide-footer-bar"></div>
+        </div>
+
+    </div>
+
+    <!-- Slide Navigation Script -->
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 3;
+
+        function showSlide(index) {
+            if (index < 1) index = totalSlides;
+            if (index > totalSlides) index = 1;
+            currentSlide = index;
+
+            for (let i = 1; i <= totalSlides; i++) {
+                const slide = document.getElementById(`slide-${i}`);
+                if (slide) {
+                    if (i === currentSlide) {
+                        slide.classList.add('active');
+                    } else {
+                        slide.classList.remove('active');
+                    }
+                }
+            }
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        // Keyboard Arrow Key Support
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === 'Space') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+    </script>
+</body>
+</html>
