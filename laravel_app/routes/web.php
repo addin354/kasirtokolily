@@ -160,6 +160,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/inventory/export-riwayat/excel', [InventoryController::class, 'exportRiwayatExcel'])->name('inventory.export-riwayat.excel');
         Route::get('/stok-masuk/search-product', [StokMasukController::class, 'searchProducts'])->name('stok-masuk.search-product');
         Route::middleware('role:admin')->group(function () {
+            Route::post('/stok-masuk', [StokMasukController::class, 'store'])->name('stok-masuk.store');
             Route::post('/inventory/stock-opname', [InventoryController::class, 'storeStockOpname'])->name('inventory.stock-opname.store');
             Route::post('/inventory/penyesuaian', [InventoryController::class, 'storePenyesuaian'])->name('inventory.penyesuaian.store');
         });
