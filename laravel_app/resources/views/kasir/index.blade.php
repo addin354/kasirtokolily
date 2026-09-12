@@ -178,7 +178,7 @@
                 <div class="card-body p-3 p-md-4">
                     <div class="row g-3">
                         <!-- Baris Pertama -->
-                        <div class="col-md-3 col-12">
+                        <div class="col-md-3 col-6">
                             <label for="kasir-jenis-harga" class="form-label small fw-bold text-muted mb-1">Jenis Harga</label>
                             <select id="kasir-jenis-harga" name="jenis_harga" class="form-select form-select-lg py-2 fs-6 shadow-sm border-2">
                                 @foreach ($jenisHargaList as $val => $label)
@@ -186,7 +186,23 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-9 col-12">
+                        <div class="col-md-3 col-6">
+                            <label for="kasir-qty-header" class="form-label small fw-bold text-muted mb-1">Jumlah (QTY)</label>
+                            <div class="input-group input-group-lg shadow-sm">
+                                <button type="button" class="btn btn-outline-secondary border-2 px-2.5 bg-light" id="btn-qty-header-minus" title="Kurangi QTY"><i class="bi bi-dash-lg"></i></button>
+                                <input
+                                    type="number"
+                                    id="kasir-qty-header"
+                                    class="form-control text-center py-2 fs-5 border-2 border-start-0 border-end-0 fw-bold text-primary"
+                                    value="1"
+                                    min="0.001"
+                                    step="1"
+                                    inputmode="decimal"
+                                >
+                                <button type="button" class="btn btn-outline-secondary border-2 px-2.5 bg-light" id="btn-qty-header-plus" title="Tambah QTY"><i class="bi bi-plus-lg"></i></button>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-12">
                             <label for="product-search" class="form-label small fw-bold text-muted mb-1">Barcode / Nama Produk</label>
                             <div class="position-relative">
                                 <div class="input-group input-group-lg shadow-sm">
@@ -735,6 +751,12 @@
         updateKembalianFromTotal();
     }
 
+    function getHeaderQty() {
+        var raw = ($('#kasir-qty-header').val() || '1').replace(',', '.');
+        var q = parseFloat(raw);
+        return (!isNaN(q) && q > 0) ? q : 1;
+    }
+
     function postAdd(payload) {
         return $.ajax({
             url: addUrl,
@@ -746,6 +768,7 @@
             },
             data: $.extend({}, payload, {
                 jenis_harga: $jenis.val(),
+                qty: getHeaderQty(),
                 _token: $('meta[name="csrf-token"]').attr('content')
             })
         });
@@ -757,6 +780,7 @@
                 if (data.ok) {
                     hideSuggestions();
                     $input.val('').focus();
+                    $('#kasir-qty-header').val(1);
                     applyCartPayload(data);
                     showKasirToast(data.message || 'Produk ditambahkan.', 'success');
                 } else {
@@ -778,6 +802,7 @@
                 if (data.ok) {
                     hideSuggestions();
                     $input.val('').focus();
+                    $('#kasir-qty-header').val(1);
                     applyCartPayload(data);
                     showKasirToast(data.message || 'Produk ditambahkan.', 'success');
                 } else {
@@ -792,6 +817,22 @@
                 Swal.fire('Gagal', msg, 'error');
             });
     }
+
+    $(document).on('click', '#btn-qty-header-plus', function(e) {
+        e.preventDefault();
+        var raw = ($('#kasir-qty-header').val() || '1').replace(',', '.');
+        var val = parseFloat(raw) || 0;
+        $('#kasir-qty-header').val(Math.round((val + 1) * 1000) / 1000);
+    });
+
+    $(document).on('click', '#btn-qty-header-minus', function(e) {
+        e.preventDefault();
+        var raw = ($('#kasir-qty-header').val() || '1').replace(',', '.');
+        var val = parseFloat(raw) || 0;
+        if (val > 1) {
+            $('#kasir-qty-header').val(Math.max(1, Math.round((val - 1) * 1000) / 1000));
+        }
+    });
 
     function runSearch(q) {
         var seq = ++searchSeq;

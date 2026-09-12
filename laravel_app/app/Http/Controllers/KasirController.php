@@ -314,9 +314,14 @@ class KasirController extends Controller
 
     public function addToCartByBarcode(Request $request)
     {
+        if ($request->has('qty')) {
+            $request->merge(['qty' => str_replace(',', '.', (string) $request->input('qty'))]);
+        }
+
         $data = $request->validate([
             'barcode' => ['required', 'string', 'max:255'],
             'jenis_harga' => $this->jenisHargaRule(),
+            'qty' => ['nullable', 'numeric', 'min:0.001'],
         ]);
 
         $term = trim($data['barcode']);
@@ -333,7 +338,7 @@ class KasirController extends Controller
 
         $request->merge([
             'produk_id' => $product->id,
-            'qty' => 1,
+            'qty' => $data['qty'] ?? 1,
             'jenis_harga' => $data['jenis_harga'],
         ]);
 
