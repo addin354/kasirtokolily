@@ -186,23 +186,23 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-3 col-6">
+                        <div class="col-md-2 col-6">
                             <label for="kasir-qty-header" class="form-label small fw-bold text-muted mb-1">Jumlah (QTY)</label>
                             <div class="input-group input-group-lg shadow-sm">
-                                <button type="button" class="btn btn-outline-secondary border-2 px-2.5 bg-light" id="btn-qty-header-minus" title="Kurangi QTY"><i class="bi bi-dash-lg"></i></button>
+                                <button type="button" class="btn btn-outline-secondary border-2 bg-light d-flex align-items-center justify-content-center p-0" id="btn-qty-header-minus" title="Kurangi QTY" style="width: 34px; min-width: 34px;"><i class="bi bi-dash fs-5"></i></button>
                                 <input
                                     type="number"
                                     id="kasir-qty-header"
-                                    class="form-control text-center py-2 fs-5 border-2 border-start-0 border-end-0 fw-bold text-primary"
+                                    class="form-control text-center py-2 fs-6 border-2 border-start-0 border-end-0 fw-bold text-primary px-1"
                                     value="1"
                                     min="0.001"
                                     step="1"
                                     inputmode="decimal"
                                 >
-                                <button type="button" class="btn btn-outline-secondary border-2 px-2.5 bg-light" id="btn-qty-header-plus" title="Tambah QTY"><i class="bi bi-plus-lg"></i></button>
+                                <button type="button" class="btn btn-outline-secondary border-2 bg-light d-flex align-items-center justify-content-center p-0" id="btn-qty-header-plus" title="Tambah QTY" style="width: 34px; min-width: 34px;"><i class="bi bi-plus fs-5"></i></button>
                             </div>
                         </div>
-                        <div class="col-md-6 col-12">
+                        <div class="col-md-7 col-12">
                             <label for="product-search" class="form-label small fw-bold text-muted mb-1">Barcode / Nama Produk</label>
                             <div class="position-relative">
                                 <div class="input-group input-group-lg shadow-sm">
