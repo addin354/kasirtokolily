@@ -155,7 +155,17 @@
             <h1 class="h4 mb-1 fw-bold text-dark">Penjualan</h1>
             <p class="text-muted small mb-0">Melayani transaksi penjualan pelanggan.</p>
         </div>
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 align-items-center flex-wrap">
+            <div class="dropdown">
+                <button class="btn btn-outline-success btn-sm rounded-pill px-3 dropdown-toggle d-flex align-items-center gap-1 shadow-xs fw-semibold" type="button" id="dropdownRPP02N" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-printer-fill"></i> <span id="rpp02n-kasir-status">Printer RPP02N</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="dropdownRPP02N">
+                    <li><h6 class="dropdown-header">Printer RPP02N (Direct ESC/POS)</h6></li>
+                    <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="connectRPP02NBluetooth()"><i class="bi bi-bluetooth me-2 text-primary fs-6"></i> Hubungkan Bluetooth</a></li>
+                    <li><a class="dropdown-item py-2" href="javascript:void(0)" onclick="connectRPP02NUSB()"><i class="bi bi-usb-plug me-2 text-info fs-6"></i> Hubungkan USB</a></li>
+                </ul>
+            </div>
             <span class="badge bg-secondary d-flex align-items-center gap-1 py-2 px-3 rounded-pill shadow-xs small">
                 <i class="bi bi-keyboard"></i>
                 <span>Shortcuts: <kbd class="bg-dark text-white px-1 rounded small">F2</kbd> Cari · <kbd class="bg-dark text-white px-1 rounded small">F4</kbd> Bayar · <kbd class="bg-dark text-white px-1 rounded small">ESC</kbd> Reset</span>
@@ -526,13 +536,47 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="{{ asset('js/rpp02n-printer.js') }}"></script>
 <script>
+async function connectRPP02NBluetooth() {
+    try {
+        const name = await window.RPP02NPrinter.connectBluetooth();
+        Swal.fire('Berhasil Terhubung', 'Printer Bluetooth: ' + name, 'success');
+        updateKasirPrinterStatus();
+    } catch (e) {
+        Swal.fire('Gagal Koneksi', e.message, 'error');
+    }
+}
+
+async function connectRPP02NUSB() {
+    try {
+        const name = await window.RPP02NPrinter.connectUSB();
+        Swal.fire('Berhasil Terhubung', 'Printer USB: ' + name, 'success');
+        updateKasirPrinterStatus();
+    } catch (e) {
+        Swal.fire('Gagal Koneksi', e.message, 'error');
+    }
+}
+
+function updateKasirPrinterStatus() {
+    const el = document.getElementById('rpp02n-kasir-status');
+    if (!el) return;
+    const name = localStorage.getItem('rpp02n_printer_name');
+    if (window.RPP02NPrinter && window.RPP02NPrinter.isConnected()) {
+        el.innerHTML = '🟢 ' + (name || 'RPP02N Terhubung');
+    } else if (name) {
+        el.innerHTML = '🟡 ' + name;
+    } else {
+        el.innerHTML = 'Printer RPP02N';
+    }
+}
+
 (function ($) {
     'use strict';
 
-    // Start Clock
     $(document).ready(function() {
         startRealtimeClock();
+        updateKasirPrinterStatus();
     });
 
     function startRealtimeClock() {

@@ -250,51 +250,140 @@
         Semoga Sehat dan Berkah
     </div>
 
-    <div class="no-print">
+    <div class="no-print" style="margin-top: 15px; display: flex; flex-direction: column; gap: 8px; align-items: center;">
 
-    <button onclick="window.print()"
-            class="btn btn-primary">
-        🖨 Cetak Komputer
-    </button>
+        <div id="rpp02n-status-badge" style="font-size: 11px; padding: 4px 8px; border-radius: 12px; background: #e9ecef; color: #495057; font-weight: bold;">
+            ⚪ RPP02N Belum Terhubung
+        </div>
 
-    <a href="{{ route('kasir.rawbt',$transaksi) }}"
-       class="btn btn-success">
-        📱 Cetak Bluetooth
-    </a>
+        <div style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: center;">
+            <button type="button" onclick="connectRPP02NBluetooth()" class="btn" style="background: #0d6efd; color: white;">
+                📶 Hubungkan Bluetooth
+            </button>
+            <button type="button" onclick="connectRPP02NUSB()" class="btn" style="background: #17a2b8; color: white;">
+                🔌 Hubungkan USB
+            </button>
+            <button type="button" onclick="printDirectRPP02N()" class="btn" style="background: #198754; color: white; font-weight: bold;">
+                ⚡ Cetak RPP02N (Langsung)
+            </button>
+        </div>
 
-    <a href="{{ route('kasir.index') }}"
-       class="btn btn-secondary">
-        Kembali
-    </a>
+        <div style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; margin-top: 5px;">
+            <button onclick="window.print()" class="btn btn-primary">
+                🖨 Cetak Komputer (Dialog)
+            </button>
+
+            <a href="{{ route('kasir.rawbt',$transaksi) }}" class="btn btn-success">
+                📱 Cetak RawBT (HP)
+            </a>
+
+            <a href="{{ route('kasir.index') }}" class="btn btn-secondary">
+                Kembali ke Kasir
+            </a>
+        </div>
 
     </div>
 
-@if(session('struk_autoprint'))
-<script>
+    <script src="{{ asset('js/rpp02n-printer.js') }}"></script>
+    <script>
+    const receiptData = {
+        toko_nama: "LILY SEMBAKO",
+        toko_alamat: "Jl. Griya Permata Raya 1 No.54, Handil Bakti, Alalak, Barito Kuala",
+        toko_hp: "0813-5602-1350 / 0853-4906-3081",
+        no_transaksi: "TRX-{{ str_pad($transaksi->id, 6, '0', STR_PAD_LEFT) }}",
+        tanggal: "{{ $transaksi->tanggal->timezone(config('app.timezone'))->format('d/m/Y H:i') }}",
+        kasir: "{{ Auth::user()->name }}",
+        pelanggan: "{{ $transaksi->nama_pelanggan ?? 'Umum' }}",
+        total_item: "{{ $transaksi->detailTransaksis->sum('qty_input') }}",
+        items: [
+            @foreach ($transaksi->detailTransaksis as $d)
+            {
+                nama: {!! json_encode($d->product?->nama ?? 'Produk') !!},
+                qty: "{{ $d->qty_input ?? $d->qty }}",
+                harga: "{{ number_format($d->harga, 0, ',', '.') }}",
+                subtotal: "{{ number_format($d->subtotal, 0, ',', '.') }}",
+                jenis: "{{ \App\Models\Product::labelJenisHarga($d->jenis_harga ?? 'eceran') }}"
+            },
+            @endforeach
+        ],
+        total: "{{ number_format($transaksi->total, 0, ',', '.') }}",
+        bayar: "{{ number_format($transaksi->bayar, 0, ',', '.') }}",
+        kembalian: "{{ number_format($transaksi->kembalian, 0, ',', '.') }}",
+        metode_pembayaran: "{{ $metode === 'Transfer Bank' ? 'Transfer ' . ($transaksi->nama_bank ?? '') : $metode }}",
+        referensi: "{{ $transaksi->nomor_referensi ?? '' }}"
+    };
 
-window.addEventListener('load', function(){
-
-    const isAndroid =
-        /Android/i.test(navigator.userAgent);
-
-    if(isAndroid){
-
-        // HP → RawBT
-        window.location.href =
-            "{{ route('kasir.rawbt',$transaksi) }}";
-
-    }else{
-
-        // Laptop / PC → Print Browser
-        setTimeout(function(){
-            window.print();
-        },300);
-
+    function updatePrinterStatus() {
+        const badge = document.getElementById('rpp02n-status-badge');
+        const savedName = localStorage.getItem('rpp02n_printer_name');
+        if (window.RPP02NPrinter && window.RPP02NPrinter.isConnected()) {
+            badge.style.background = '#d1e7dd';
+            badge.style.color = '#0f5132';
+            badge.innerHTML = '🟢 Terhubung: ' + (savedName || 'RPP02N Thermal Printer');
+        } else if (savedName) {
+            badge.style.background = '#fff3cd';
+            badge.style.color = '#664d03';
+            badge.innerHTML = '🟡 Perlu Hubungkan Ulang: ' + savedName;
+        } else {
+            badge.style.background = '#e9ecef';
+            badge.style.color = '#495057';
+            badge.innerHTML = '⚪ RPP02N Belum Terhubung';
+        }
     }
 
-});
+    async function connectRPP02NBluetooth() {
+        try {
+            const name = await window.RPP02NPrinter.connectBluetooth();
+            alert('Berhasil terhubung ke Bluetooth Printer: ' + name);
+            updatePrinterStatus();
+        } catch (e) {
+            alert('Gagal menghubungkan Bluetooth: ' + e.message);
+        }
+    }
 
-</script>
-@endif
+    async function connectRPP02NUSB() {
+        try {
+            const name = await window.RPP02NPrinter.connectUSB();
+            alert('Berhasil terhubung ke USB Printer: ' + name);
+            updatePrinterStatus();
+        } catch (e) {
+            alert('Gagal menghubungkan USB: ' + e.message);
+        }
+    }
+
+    async function printDirectRPP02N() {
+        if (!window.RPP02NPrinter.isConnected()) {
+            const confirmConn = confirm('Printer RPP02N belum terhubung. Hubungkan via Bluetooth sekarang?');
+            if (confirmConn) {
+                await connectRPP02NBluetooth();
+            } else {
+                return;
+            }
+        }
+
+        try {
+            await window.RPP02NPrinter.printReceipt(receiptData);
+        } catch (e) {
+            alert('Gagal cetak ke RPP02N: ' + e.message);
+        }
+    }
+
+    window.addEventListener('load', function() {
+        updatePrinterStatus();
+
+        @if(session('struk_autoprint'))
+            if (window.RPP02NPrinter.isConnected()) {
+                printDirectRPP02N();
+            } else {
+                const isAndroid = /Android/i.test(navigator.userAgent);
+                if (isAndroid) {
+                    window.location.href = "{{ route('kasir.rawbt',$transaksi) }}";
+                } else {
+                    setTimeout(function(){ window.print(); }, 300);
+                }
+            }
+        @endif
+    });
+    </script>
 </body>
 </html>
