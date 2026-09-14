@@ -593,18 +593,23 @@ return response()->json([
 
         try {
             $transaksi = DB::transaction(function () use ($lines, $total, $ongkir, $bayar, $kembalian, $pelangganId, $namaPelanggan, $metodePembayaran, $namaBank, $nomorReferensi) {
-                $transaksi = Transaksi::create([
+                $payload = [
                     'pelanggan_id' => $pelangganId,
                     'nama_pelanggan' => $namaPelanggan,
                     'tanggal' => now(),
                     'total' => $total,
-                    'ongkir' => $ongkir,
                     'bayar' => $bayar,
                     'kembalian' => $kembalian,
                     'metode_pembayaran' => $metodePembayaran,
                     'nama_bank' => $namaBank,
                     'nomor_referensi' => $nomorReferensi,
-                ]);
+                ];
+
+                if (\Illuminate\Support\Facades\Schema::hasColumn('transaksi', 'ongkir')) {
+                    $payload['ongkir'] = $ongkir;
+                }
+
+                $transaksi = Transaksi::create($payload);
 
                 foreach ($lines as $line) {
                     $product = Product::query()
