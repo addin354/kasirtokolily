@@ -547,7 +547,9 @@ return response()->json([
             }
         }
 
-        $total = $this->sumLines($lines);
+        $subtotalItems = $this->sumLines($lines);
+        $ongkir = max(0, (float) $request->input('ongkir', 0));
+        $total = round($subtotalItems + $ongkir, 2);
 
         $metodePembayaran = $request->input('metode_pembayaran', 'Cash');
         if (!in_array($metodePembayaran, ['Cash', 'Transfer Bank', 'QRIS'], true)) {
@@ -556,6 +558,7 @@ return response()->json([
 
         $rules = [
             'pelanggan_id' => ['nullable', 'integer', 'exists:pelanggans,id'],
+            'ongkir' => ['nullable', 'numeric', 'min:0'],
             'metode_pembayaran' => ['required', 'string', 'in:Cash,Transfer Bank,QRIS'],
         ];
 
@@ -589,12 +592,13 @@ return response()->json([
         }
 
         try {
-            $transaksi = DB::transaction(function () use ($lines, $total, $bayar, $kembalian, $pelangganId, $namaPelanggan, $metodePembayaran, $namaBank, $nomorReferensi) {
+            $transaksi = DB::transaction(function () use ($lines, $total, $ongkir, $bayar, $kembalian, $pelangganId, $namaPelanggan, $metodePembayaran, $namaBank, $nomorReferensi) {
                 $transaksi = Transaksi::create([
                     'pelanggan_id' => $pelangganId,
                     'nama_pelanggan' => $namaPelanggan,
                     'tanggal' => now(),
                     'total' => $total,
+                    'ongkir' => $ongkir,
                     'bayar' => $bayar,
                     'kembalian' => $kembalian,
                     'metode_pembayaran' => $metodePembayaran,

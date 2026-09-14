@@ -209,6 +209,20 @@
     <hr>
 
     <table class="total-table">
+        @if ($transaksi->ongkir > 0)
+        <tr>
+            <td>Subtotal Belanja</td>
+            <td align="right">
+                Rp {{ number_format($transaksi->total - $transaksi->ongkir, 0, ',', '.') }}
+            </td>
+        </tr>
+        <tr>
+            <td>Ongkir</td>
+            <td align="right">
+                Rp {{ number_format($transaksi->ongkir, 0, ',', '.') }}
+            </td>
+        </tr>
+        @endif
         <tr class="grand-total">
             <td>Total</td>
             <td align="right">
@@ -307,6 +321,7 @@
             @endforeach
         ],
         total: "{{ number_format($transaksi->total, 0, ',', '.') }}",
+        ongkir: "{{ number_format($transaksi->ongkir, 0, ',', '.') }}",
         bayar: "{{ number_format($transaksi->bayar, 0, ',', '.') }}",
         kembalian: "{{ number_format($transaksi->kembalian, 0, ',', '.') }}",
         metode_pembayaran: "{{ $metode === 'Transfer Bank' ? 'Transfer ' . ($transaksi->nama_bank ?? '') : $metode }}",

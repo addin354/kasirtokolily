@@ -267,6 +267,9 @@
             write('--------------------------------\n');
 
             // TOTALS (Bold)
+            if (data.ongkir && data.ongkir !== '0') {
+                write(this.formatLine('ONGKIR', 'Rp ' + data.ongkir, 32) + '\n');
+            }
             writeCmd([0x1B, 0x45, 0x01]); // Bold on
             write(this.formatLine('TOTAL', 'Rp ' + (data.total || '0'), 32) + '\n');
             writeCmd([0x1B, 0x45, 0x00]); // Bold off

@@ -319,7 +319,7 @@
                 <div class="card-body p-3 p-md-4">
                     <div class="kasir-total-box text-center py-4 border rounded-3 mb-3 bg-light">
                         <div class="small text-uppercase text-muted fw-bold mb-1" style="letter-spacing: 0.05em;">TOTAL BELANJA</div>
-                        <strong class="fs-2 text-success fw-bold d-block" id="kasir-total-display" data-amount="{{ $total }}">
+                        <strong class="fs-2 text-success fw-bold d-block" id="kasir-total-display" data-subtotal="{{ $total }}" data-amount="{{ $total }}">
                             Rp {{ number_format($total,0,',','.') }}
                         </strong>
                     </div>
@@ -336,6 +336,27 @@
                                 @endforeach
                             </select>
                             @error('pelanggan_id')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="ongkir" class="form-label fw-bold small text-muted"><i class="bi bi-truck me-1"></i> Ongkir / Biaya Pengiriman</label>
+                            <div class="input-group input-group-lg shadow-sm">
+                                <span class="input-group-text bg-light border-2 text-muted fw-semibold fs-6">Rp</span>
+                                <input
+                                    type="number"
+                                    name="ongkir"
+                                    id="ongkir"
+                                    value="{{ old('ongkir', 0) }}"
+                                    class="form-control border-2 fs-6 fw-bold text-primary"
+                                    placeholder="0"
+                                    min="0"
+                                    step="1000"
+                                    inputmode="numeric"
+                                >
+                            </div>
+                            @error('ongkir')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
@@ -764,17 +785,31 @@ function updateKasirPrinterStatus() {
         updateKembalianFromTotal();
     }
 
+    function recalculateGrandTotal() {
+        var subtotal = parseFloat($('#kasir-total-display').attr('data-subtotal')) || 0;
+        var ongkir = parseFloat($('#ongkir').val()) || 0;
+        var grandTotal = subtotal + ongkir;
+
+        $('#kasir-total-display').attr('data-amount', grandTotal).text(formatRp(grandTotal));
+        updateKembalianFromTotal();
+    }
+
+    $(document).on('input change', '#ongkir', function() {
+        recalculateGrandTotal();
+    });
+
     $('#metode_pembayaran').on('change', handlePaymentMethodChange);
     $(document).ready(function() {
         handlePaymentMethodChange();
+        recalculateGrandTotal();
     });
 
     function applyCartPayload(data) {
         if (data.cart_html !== undefined) {
             $('#kasir-cart-body').html(data.cart_html);
         }
-        if (data.total_formatted !== undefined) {
-            $('#kasir-total-display').attr('data-amount', data.total).text(data.total_formatted);
+        if (data.total !== undefined) {
+            $('#kasir-total-display').attr('data-subtotal', data.total);
         }
         if (data.item_count !== undefined) {
             $('#cart-item-count-badge').text(data.item_count);
@@ -792,7 +827,7 @@ function updateKasirPrinterStatus() {
         } else {
             $('#kasir-cart-blocked-alert').addClass('d-none').hide();
         }
-        updateKembalianFromTotal();
+        recalculateGrandTotal();
     }
 
     function getHeaderQty() {

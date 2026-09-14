@@ -15,6 +15,7 @@ class Transaksi extends Model
         'nama_pelanggan',
         'tanggal',
         'total',
+        'ongkir',
         'bayar',
         'kembalian',
         'metode_pembayaran',
@@ -27,6 +28,7 @@ class Transaksi extends Model
         return [
             'tanggal' => 'datetime',
             'total' => 'decimal:2',
+            'ongkir' => 'decimal:2',
             'bayar' => 'decimal:2',
             'kembalian' => 'decimal:2',
         ];

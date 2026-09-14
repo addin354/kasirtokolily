@@ -31,6 +31,9 @@ Total Item    : {{ $transaksi->detailTransaksis->sum('qty_input') }}
 @endforeach
 
 --------------------------------
+@if($transaksi->ongkir > 0)
+ONGKIR     : Rp {{ number_format($transaksi->ongkir,0,',','.') }}
+@endif
 TOTAL      : Rp {{ number_format($transaksi->total,0,',','.') }}
 BAYAR      : Rp {{ number_format($transaksi->bayar,0,',','.') }}
 KEMBALIAN  : Rp {{ number_format($transaksi->kembalian,0,',','.') }}
